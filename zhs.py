@@ -26,7 +26,7 @@ class treeSolution:
         if self.wait.until(lambda driver: self.driver.current_url == 'https://onlineweb.zhihuishu.com/onlinestuh5'):
             print("登入成功".center(60, '-'))
             classes = self.toGetClass()
-            # self.autoPlay(classes)
+            self.autoPlay(classes)
         else:
             try:
                 if self.driver.find_element(By.XPATH, '//*[@id="form-ipt-error-l-username"]').text == '手机号或密码错误':
@@ -48,7 +48,6 @@ class treeSolution:
             time.sleep(1.5)
             self.startPlay()
         self.driver.quit()
-        input("over...")
 
     def startPlay(self):
 

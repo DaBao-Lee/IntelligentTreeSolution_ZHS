@@ -111,6 +111,7 @@ class treeSolution:
         self.action.release().perform()
         time.sleep(0.3)
         if len(self.driver.find_elements(By.CLASS_NAME, 'yidun_modal__title')):
+            time.sleep(0.5)
             return True
         else: return False
 

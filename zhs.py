@@ -21,11 +21,11 @@ class treeSolution:
         self.wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="lUsername"]'))).send_keys(str(username))
         self.driver.find_element(By.XPATH, '//*[@id="lPassword"]').send_keys(str(mm))
         self.driver.find_element(By.XPATH, '//*[@id="f_sign_up"]/div[1]/span').click()
-        time.sleep(0.3)
+        time.sleep(0.5)
         while self.passCaptia(): pass
         if self.wait.until(lambda driver: self.driver.current_url == 'https://onlineweb.zhihuishu.com/onlinestuh5'):
             print("登入成功".center(60, '-'))
-            time.sleep(0.3)
+            time.sleep(0.5)
             classes = self.toGetClass()
             self.autoPlay(classes)
         else:

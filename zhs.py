@@ -15,19 +15,18 @@ class treeSolution:
         self.driver = wb.Edge(options=options)
         self.wait = WebDriverWait(self.driver, 10)
         self.driver.set_window_size(1200, 800)
-        self.driver.get('https://onlineweb.zhihuishu.com/onlinestuh5')
+        self.driver.get('https://passport.zhihuishu.com/login?service=https://onlineservice-api.zhihuishu.com/gateway/f/v1/login/gologin')
         self.net = orc.InferenceSession("best.onnx")
         self.action = ActionChains(self.driver)
         self.wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="lUsername"]'))).send_keys(str(username))
         self.driver.find_element(By.XPATH, '//*[@id="lPassword"]').send_keys(str(mm))
         self.driver.find_element(By.XPATH, '//*[@id="f_sign_up"]/div[1]/span').click()
-        time.sleep(0.5)
+        time.sleep(0.3)
         while self.passCaptia(): pass
         if self.wait.until(lambda driver: self.driver.current_url == 'https://onlineweb.zhihuishu.com/onlinestuh5'):
             print("登入成功".center(60, '-'))
-            time.sleep(0.5)
             classes = self.toGetClass()
-            self.autoPlay(classes)
+            # self.autoPlay(classes)
         else:
             try:
                 if self.driver.find_element(By.XPATH, '//*[@id="form-ipt-error-l-username"]').text == '手机号或密码错误':
@@ -111,7 +110,7 @@ class treeSolution:
         self.action.release().perform()
         time.sleep(0.3)
         if len(self.driver.find_elements(By.CLASS_NAME, 'yidun_modal__title')):
-            time.sleep(0.5)
+            time.sleep(0.3)
             return True
         else: return False
 
@@ -138,8 +137,9 @@ class treeSolution:
     
     def toGetClass(self):
         
+        time.sleep(0.5)
         classes_url = []
-        parent = self.wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="sharingClassed"]/div[2]')))
+        parent = self.driver.find_element(By.XPATH, '//*[@id="sharingClassed"]/div[2]')
         classes = parent.find_elements(By.TAG_NAME, 'ul')
         print(f'目前还需要上{len(classes)}节课.')
 
@@ -163,6 +163,7 @@ def login():
         log = open("user.txt", '+w')
         log.write(username + '\n')
         log.write(mm)
+    log.close()
 
     treeSolution(username, mm)
 

@@ -136,7 +136,7 @@ class treeSolution:
     
     def toGetClass(self):
         
-        time.sleep(0.5)
+        time.sleep(0.8)
         classes_url = []
         parent = self.driver.find_element(By.XPATH, '//*[@id="sharingClassed"]/div[2]')
         classes = parent.find_elements(By.TAG_NAME, 'ul')

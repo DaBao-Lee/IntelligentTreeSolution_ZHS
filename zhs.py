@@ -27,7 +27,7 @@ class treeSolution:
             print("登入成功".center(60, '-'))
             classes = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'item-left-course')))
             print(f'目前还需要上{len(classes)}节课.')
-            # self.autoPlay(len(classes))
+            self.autoPlay(len(classes))
         else:
             try:
                 if self.driver.find_element(By.XPATH, '//*[@id="form-ipt-error-l-username"]').text == '手机号或密码错误':
@@ -63,7 +63,7 @@ class treeSolution:
         self.action.click_and_hold(e).perform()
         self.action.move_by_offset(xoffset=x+8, yoffset=0).perform()
         self.action.release().perform()
-        time.sleep(0.5)
+        time.sleep(1)
         if len(self.driver.find_elements(By.CLASS_NAME, 'yidun_modal__title')):
             time.sleep(0.3)
             return True
@@ -106,21 +106,24 @@ class treeSolution:
             self.errorCheck()
             print("-" * 50)
             for per_class in classes:
+                time.sleep(0.8)
                 if len(per_class.text.split()) <= 2: 
                     print(' '.join(per_class.text.split()))
                     continue
-                else: print(' '.join(per_class.text.split()[: -1]), end=" ")
-                self.errorCheck()
+                else: 
+                    print(' '.join(per_class.text.split()[: -1]), end=" ")
+                    if len(per_class.find_elements(By.CLASS_NAME, 'time_icofinish')) == 1:
+                        print("完成")
+                        continue
                 per_class.click()
-                time.sleep(1)
+                time.sleep(0.8)
+                per_class.click()
                 while not self.speedChange():
                     self.errorCheck()
                 while True:
+                    self.errorCheck()
                     try:
-                        self.errorCheck()
-                        A = len(per_class.find_elements(By.CLASS_NAME, 'time_ico_half'))
-                        B = len(per_class.find_elements(By.CLASS_NAME, 'time_icofinish'))
-                        if A == 0 or A == B:
+                        if len(per_class.find_elements(By.CLASS_NAME, 'time_icofinish')) == 1:
                             print("完成")
                             break
                     except: pass
@@ -131,6 +134,7 @@ class treeSolution:
         try:
             self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'videoArea'))).click()
             time.sleep(0.3)
+            self.driver.find_element(By.XPATH, '//*[@id="vjs_container"]/div[10]/div[7]/div[1]').click()
             self.driver.find_element(By.XPATH, '//*[@id="vjs_container"]/div[10]/div[9]').click()
             self.driver.find_element(By.XPATH, '//*[@id="vjs_container"]/div[10]/div[9]/div/div[1]').click()
             return True
@@ -142,8 +146,8 @@ class treeSolution:
             self.driver.find_element(By.XPATH, '//*[@id="app"]/div/div[6]/div[2]/div[1]/i').click()
         except: 
             try:
-                self.driver.find_elements(By.CLASS_NAME, 'item-topic')[1].click()
-                self.driver.find_element(By.XPATH, '/html/body/div[5]/div/div[1]/button/i').click()
+                self.driver.find_elements(By.CLASS_NAME, 'item-topic')[0].click()
+                self.driver.find_element(By.XPATH, '//*[@id="playTopic-dialog"]/div/div[3]/span/div').click()
                 self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'videoArea'))).click()
             except: pass
     

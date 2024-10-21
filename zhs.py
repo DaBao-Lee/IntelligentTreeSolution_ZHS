@@ -105,7 +105,7 @@ class treeSolution:
                     if len(per_class.find_elements(By.CLASS_NAME, 'time_icofinish')) == 1:
                         print("完成")
                         continue
-                time.sleep(1.5)
+                time.sleep(1.8)
                 per_class.click()
                 time.sleep(1)
                 self.speedChange()
@@ -116,8 +116,8 @@ class treeSolution:
                         else:
                             print(f"\r{''.join(per_class.text.split()[: -1])}", end=" ")
                     except: pass
-                continue
-                    
+                print()
+
         print("学习结束".center(60, '-'))
 
     def speedChange(self):
@@ -155,7 +155,7 @@ def login():
     mm = input("输入密码:")
     y_n = input("是否保存用户:[y/n]")
     if y_n.lower() == 'y':
-        log = open("../user.txt", '+w')
+        log = open("user.txt", '+w')
         log.write(username + '\n')
         log.write(mm)
     log.close()
@@ -163,13 +163,13 @@ def login():
     treeSolution(username, mm)
 
 if __name__ == "__main__":
-    if os.path.exists('../user.txt'):
+    if os.path.exists('user.txt'):
         if len(sys.argv) > 1 and sys.argv[1: ][0] == "-y":
             y_n = 'y'
         else:
             y_n = input("发现已有用户, 是否选择登入:[y/n]")
         if y_n.lower() == 'y':
-            log = open("../user.txt", 'r')
+            log = open("user.txt", 'r')
             username = log.readline().strip()
             mm = log.readline().strip()
             treeSolution(username, mm)

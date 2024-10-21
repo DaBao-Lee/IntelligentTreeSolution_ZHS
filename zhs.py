@@ -16,67 +16,23 @@ class treeSolution:
         self.wait = WebDriverWait(self.driver, 10)
         self.driver.set_window_size(1200, 800)
         self.driver.get('https://passport.zhihuishu.com/login?service=https://onlineservice-api.zhihuishu.com/gateway/f/v1/login/gologin')
-        self.net = orc.InferenceSession("best.onnx")
+        self.net = orc.InferenceSession("data/best.onnx")
         self.action = ActionChains(self.driver)
         self.wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="lUsername"]'))).send_keys(str(username))
         self.driver.find_element(By.XPATH, '//*[@id="lPassword"]').send_keys(str(mm))
         self.driver.find_element(By.XPATH, '//*[@id="f_sign_up"]/div[1]/span').click()
-        time.sleep(0.3)
+        time.sleep(0.5)
         while self.passCaptia(): pass
         if self.wait.until(lambda driver: self.driver.current_url == 'https://onlineweb.zhihuishu.com/onlinestuh5'):
             print("登入成功".center(60, '-'))
-            classes = self.toGetClass()
-            self.autoPlay(classes)
+            classes = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'item-left-course')))
+            print(f'目前还需要上{len(classes)}节课.')
+            # self.autoPlay(len(classes))
         else:
             try:
                 if self.driver.find_element(By.XPATH, '//*[@id="form-ipt-error-l-username"]').text == '手机号或密码错误':
                     print("手机号或密码错误!")
             except: pass
-
-    def autoPlay(self, classes_url:list=[]):
-        
-        if len(classes_url) != 0: 
-            for url in classes_url:
-                self.driver.get(url)
-                time.sleep(1.5)
-                self.startPlay()
-        y_n = input("是否播放指定地址课程:[y/n]")
-        if y_n.lower() == 'y':
-            pointed_url = input("输入指定课程地址:")
-            print("播放指定课程:", pointed_url)
-            self.driver.get(pointed_url)
-            time.sleep(1.5)
-            self.startPlay()
-        self.driver.quit()
-
-    def startPlay(self):
-
-        self.errorCheck()
-        self.driver.minimize_window()
-        print("开始学习".center(60, '-'))
-        uls = self.driver.find_elements(By.TAG_NAME, 'ul')
-        true_uls = [x for x in uls if x.get_attribute('class') == "list"]
-        for ul in true_uls:
-            classes = ul.find_elements(By.TAG_NAME, 'li')[: -1]
-            self.errorCheck()
-            print("-" * 50)
-            for per_class in classes:
-                self.errorCheck()
-                if len(per_class.text.split()) <= 2: print(' '.join(per_class.text.split()), end=" ")
-                else: print(' '.join(per_class.text.split()[: -1]), end=" ")
-                try:
-                    A = len(per_class.find_elements(By.CLASS_NAME, 'time_ico_half'))
-                    B = len(per_class.find_elements(By.CLASS_NAME, 'time_icofinish'))
-                    if A == 0 or A == B:
-                        print("完成")
-                        break
-                    per_class.click()
-                    time.sleep(1)
-                    while True:
-                        while not self.speedChange():
-                            self.errorCheck()
-                except: pass
-        print("学习结束".center(60, '-'))
 
     def passCaptia(self):
 
@@ -107,11 +63,69 @@ class treeSolution:
         self.action.click_and_hold(e).perform()
         self.action.move_by_offset(xoffset=x+8, yoffset=0).perform()
         self.action.release().perform()
-        time.sleep(0.3)
+        time.sleep(0.5)
         if len(self.driver.find_elements(By.CLASS_NAME, 'yidun_modal__title')):
             time.sleep(0.3)
             return True
         else: return False
+
+    def autoPlay(self, length=0):
+        
+        for index in range(length):
+            if self.driver.current_url != "https://onlineweb.zhihuishu.com/onlinestuh5":
+                self.driver.get("https://onlineweb.zhihuishu.com/onlinestuh5")
+                
+            classes = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'courseName')))
+            classes[index].click()
+            time.sleep(1)
+            try:
+                if self.driver.find_element(By.CLASS_NAME, 'el-message__content'):
+                    print("该课程尚未开始 跳过")
+            except: 
+                time.sleep(1)
+                self.startPlay()
+                
+        y_n = input("是否播放指定地址课程:[y/n]")
+        if y_n.lower() == 'y':
+            pointed_url = input("输入指定课程地址:")
+            print("播放指定课程:", pointed_url)
+            self.driver.get(pointed_url)
+            time.sleep(1.5)
+            self.startPlay()
+        # self.driver.quit()
+
+    def startPlay(self):
+
+        self.errorCheck()
+        # self.driver.minimize_window()
+        print("开始学习".center(60, '-'))
+        uls = self.driver.find_elements(By.TAG_NAME, 'ul')
+        true_uls = [x for x in uls if x.get_attribute('class') == "list"]
+        for ul in true_uls:
+            classes = ul.find_elements(By.TAG_NAME, 'li')[: -1]
+            self.errorCheck()
+            print("-" * 50)
+            for per_class in classes:
+                if len(per_class.text.split()) <= 2: 
+                    print(' '.join(per_class.text.split()))
+                    continue
+                else: print(' '.join(per_class.text.split()[: -1]), end=" ")
+                self.errorCheck()
+                per_class.click()
+                time.sleep(1)
+                while not self.speedChange():
+                    self.errorCheck()
+                while True:
+                    try:
+                        self.errorCheck()
+                        A = len(per_class.find_elements(By.CLASS_NAME, 'time_ico_half'))
+                        B = len(per_class.find_elements(By.CLASS_NAME, 'time_icofinish'))
+                        if A == 0 or A == B:
+                            print("完成")
+                            break
+                    except: pass
+                    
+        print("学习结束".center(60, '-'))
 
     def speedChange(self):
         try:
@@ -125,35 +139,14 @@ class treeSolution:
 
     def errorCheck(self):
         try:
-            self.driver.find_element(By.XPATH, '//*[@id="app"]/div/div[3]/div/div[3]/span/button').click()
             self.driver.find_element(By.XPATH, '//*[@id="app"]/div/div[6]/div[2]/div[1]/i').click()
         except: 
             try:
                 self.driver.find_elements(By.CLASS_NAME, 'item-topic')[1].click()
-                self.driver.find_element(By.XPATH, '//*[@id="playTopic-dialog"]/div/div[3]').click()
                 self.driver.find_element(By.XPATH, '/html/body/div[5]/div/div[1]/button/i').click()
+                self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'videoArea'))).click()
             except: pass
     
-    def toGetClass(self):
-        
-        time.sleep(0.8)
-        classes_url = []
-        parent = self.driver.find_element(By.XPATH, '//*[@id="sharingClassed"]/div[2]')
-        classes = parent.find_elements(By.TAG_NAME, 'ul')
-        print(f'目前还需要上{len(classes)}节课.')
-
-        for element in classes:
-            course_name = element.find_element(By.CLASS_NAME, 'courseName')
-            print(course_name.text, end=" ")
-            try:
-                not_start = element.find_elements(By.CLASS_NAME, 'no-start-msk')
-                if len(not_start) == 1: print('尚未开始 跳过')
-            except:
-                print('已添加至播放列表')
-                classes_url.append(course_name)
-            
-        return classes_url
-
 def login():
     username = input("输入手机号:")
     mm = input("输入密码:")

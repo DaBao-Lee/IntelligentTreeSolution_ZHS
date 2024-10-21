@@ -105,9 +105,10 @@ class treeSolution:
                     if len(per_class.find_elements(By.CLASS_NAME, 'time_icofinish')) == 1:
                         print("完成")
                         continue
-                time.sleep(1.8)
                 per_class.click()
-                time.sleep(1)
+                time.sleep(1.5)
+                per_class.click()
+                time.sleep(1.5)
                 self.speedChange()
                 while True:
                     try:
@@ -116,7 +117,7 @@ class treeSolution:
                         else:
                             print(f"\r{''.join(per_class.text.split()[: -1])}", end=" ")
                     except: pass
-                print()
+                print(" 完成")
 
         print("学习结束".center(60, '-'))
 

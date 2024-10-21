@@ -96,6 +96,7 @@ class treeSolution:
 
     def startPlay(self):
 
+        time.sleep(0.8)
         self.errorCheck()
         # self.driver.minimize_window()
         print("开始学习".center(60, '-'))
@@ -106,7 +107,6 @@ class treeSolution:
             self.errorCheck()
             print("-" * 50)
             for per_class in classes:
-                time.sleep(0.8)
                 if len(per_class.text.split()) <= 2: 
                     print(' '.join(per_class.text.split()))
                     continue
@@ -117,7 +117,6 @@ class treeSolution:
                         continue
                 per_class.click()
                 time.sleep(0.8)
-                per_class.click()
                 while not self.speedChange():
                     self.errorCheck()
                 while True:

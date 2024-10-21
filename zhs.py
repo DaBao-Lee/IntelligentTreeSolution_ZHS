@@ -16,7 +16,7 @@ class treeSolution:
         self.wait = WebDriverWait(self.driver, 10)
         self.driver.set_window_size(1200, 800)
         self.driver.get('https://passport.zhihuishu.com/login?service=https://onlineservice-api.zhihuishu.com/gateway/f/v1/login/gologin')
-        self.net = orc.InferenceSession("data/best.onnx")
+        self.net = orc.InferenceSession("best.onnx")
         self.action = ActionChains(self.driver)
         self.wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="lUsername"]'))).send_keys(str(username))
         self.driver.find_element(By.XPATH, '//*[@id="lPassword"]').send_keys(str(mm))

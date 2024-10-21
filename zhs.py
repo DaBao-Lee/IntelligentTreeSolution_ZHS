@@ -1,3 +1,4 @@
+import threading
 import numpy as np
 import os, time, cv2, sys
 import onnxruntime as orc
@@ -18,21 +19,19 @@ class treeSolution:
         self.driver.get('https://passport.zhihuishu.com/login?service=https://onlineservice-api.zhihuishu.com/gateway/f/v1/login/gologin')
         self.net = orc.InferenceSession("best.onnx")
         self.action = ActionChains(self.driver)
+        task = threading.Thread(target=self.errorCheck)
+        task.daemon = True
+        task.start()
         self.wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="lUsername"]'))).send_keys(str(username))
         self.driver.find_element(By.XPATH, '//*[@id="lPassword"]').send_keys(str(mm))
         self.driver.find_element(By.XPATH, '//*[@id="f_sign_up"]/div[1]/span').click()
-        time.sleep(0.5)
+        time.sleep(1)
         while self.passCaptia(): pass
-        if self.wait.until(lambda driver: self.driver.current_url == 'https://onlineweb.zhihuishu.com/onlinestuh5'):
-            print("登入成功".center(60, '-'))
-            classes = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'item-left-course')))
-            print(f'目前还需要上{len(classes)}节课.')
-            self.autoPlay(len(classes))
-        else:
-            try:
-                if self.driver.find_element(By.XPATH, '//*[@id="form-ipt-error-l-username"]').text == '手机号或密码错误':
-                    print("手机号或密码错误!")
-            except: pass
+        self.wait.until(lambda x: self.driver.current_url == 'https://onlineweb.zhihuishu.com/onlinestuh5') 
+        print("登入成功".center(60, '-'))
+        classes = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'item-left-course')))
+        print(f'目前还需要上{len(classes)}节课.')
+        self.autoPlay(len(classes))
 
     def passCaptia(self):
 
@@ -65,24 +64,17 @@ class treeSolution:
         self.action.release().perform()
         time.sleep(1)
         if len(self.driver.find_elements(By.CLASS_NAME, 'yidun_modal__title')):
-            time.sleep(0.3)
             return True
         else: return False
 
     def autoPlay(self, length=0):
         
-        for index in range(length):
-            if self.driver.current_url != "https://onlineweb.zhihuishu.com/onlinestuh5":
-                self.driver.get("https://onlineweb.zhihuishu.com/onlinestuh5")
-                
-            classes = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'courseName')))
-            classes[index].click()
-            time.sleep(1)
-            try:
-                if self.driver.find_element(By.CLASS_NAME, 'el-message__content'):
-                    print("该课程尚未开始 跳过")
-            except: 
-                time.sleep(1)
+        if length != 0:
+            for index in range(length):
+                if self.driver.current_url != "https://onlineweb.zhihuishu.com/onlinestuh5":
+                    self.driver.get("https://onlineweb.zhihuishu.com/onlinestuh5")
+                classes = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'courseName')))
+                classes[index].click()
                 self.startPlay()
                 
         y_n = input("是否播放指定地址课程:[y/n]")
@@ -96,15 +88,13 @@ class treeSolution:
 
     def startPlay(self):
 
-        time.sleep(0.8)
-        self.errorCheck()
-        # self.driver.minimize_window()
         print("开始学习".center(60, '-'))
+        self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'tabTitle')))
+        time.sleep(1.5)
         uls = self.driver.find_elements(By.TAG_NAME, 'ul')
         true_uls = [x for x in uls if x.get_attribute('class') == "list"]
         for ul in true_uls:
             classes = ul.find_elements(By.TAG_NAME, 'li')[: -1]
-            self.errorCheck()
             print("-" * 50)
             for per_class in classes:
                 if len(per_class.text.split()) <= 2: 
@@ -115,47 +105,57 @@ class treeSolution:
                     if len(per_class.find_elements(By.CLASS_NAME, 'time_icofinish')) == 1:
                         print("完成")
                         continue
+                time.sleep(1.5)
                 per_class.click()
-                time.sleep(0.8)
-                while not self.speedChange():
-                    self.errorCheck()
+                time.sleep(1)
+                self.speedChange()
                 while True:
-                    self.errorCheck()
                     try:
                         if len(per_class.find_elements(By.CLASS_NAME, 'time_icofinish')) == 1:
-                            print("完成")
                             break
+                        else:
+                            print(f"\r{''.join(per_class.text.split()[: -1])}", end=" ")
                     except: pass
+                continue
                     
         print("学习结束".center(60, '-'))
 
     def speedChange(self):
         try:
             self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'videoArea'))).click()
-            time.sleep(0.3)
+            time.sleep(0.5)
             self.driver.find_element(By.XPATH, '//*[@id="vjs_container"]/div[10]/div[7]/div[1]').click()
             self.driver.find_element(By.XPATH, '//*[@id="vjs_container"]/div[10]/div[9]').click()
             self.driver.find_element(By.XPATH, '//*[@id="vjs_container"]/div[10]/div[9]/div/div[1]').click()
-            return True
-        except: 
-            return False
+        except: pass
 
     def errorCheck(self):
-        try:
-            self.driver.find_element(By.XPATH, '//*[@id="app"]/div/div[6]/div[2]/div[1]/i').click()
-        except: 
+
+        while True:
+            try:
+                self.driver.find_element(By.XPATH, '//*[@id="app"]/div/div[6]/div[2]/div[1]/i').click()
+            except: pass
             try:
                 self.driver.find_elements(By.CLASS_NAME, 'item-topic')[0].click()
                 self.driver.find_element(By.XPATH, '//*[@id="playTopic-dialog"]/div/div[3]/span/div').click()
                 self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'videoArea'))).click()
             except: pass
-    
+            try: 
+                if self.driver.find_element(By.CLASS_NAME, 'el-message__content'):
+                    print("该课程尚未开始 跳过")
+            except: pass
+            try:
+                if self.driver.find_element(By.XPATH, '//*[@id="form-ipt-error-l-username"]').text == '手机号或密码错误':
+                    print("手机号或密码错误!")
+            except: pass
+            time.sleep(0.1)
+
 def login():
     username = input("输入手机号:")
     mm = input("输入密码:")
     y_n = input("是否保存用户:[y/n]")
     if y_n.lower() == 'y':
-        log = open("user.txt", '+w')
+        log = open("../user.txt", '+w')
         log.write(username + '\n')
         log.write(mm)
     log.close()
@@ -163,13 +163,13 @@ def login():
     treeSolution(username, mm)
 
 if __name__ == "__main__":
-    if os.path.exists('user.txt'):
+    if os.path.exists('../user.txt'):
         if len(sys.argv) > 1 and sys.argv[1: ][0] == "-y":
             y_n = 'y'
         else:
             y_n = input("发现已有用户, 是否选择登入:[y/n]")
         if y_n.lower() == 'y':
-            log = open("user.txt", 'r')
+            log = open("../user.txt", 'r')
             username = log.readline().strip()
             mm = log.readline().strip()
             treeSolution(username, mm)

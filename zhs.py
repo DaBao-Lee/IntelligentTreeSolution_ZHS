@@ -97,8 +97,11 @@ class treeSolution:
             classes = ul.find_elements(By.TAG_NAME, 'li')[: -1]
             print("-" * 50)
             for per_class in classes:
-                if len(per_class.text.split()) <= 2: 
-                    print(' '.join(per_class.text.split()))
+                try:
+                    per_class.find_element(By.CLASS_NAME, 'time_ico_half')
+                except:
+                    print(' '.join(per_class.text.split()[: -1]), end=" ")
+                    print("完成")
                     continue
                 else: 
                     print(' '.join(per_class.text.split()[: -1]), end=" ")

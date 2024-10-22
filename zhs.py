@@ -84,7 +84,7 @@ class treeSolution:
             self.driver.get(pointed_url)
             time.sleep(1.5)
             self.startPlay()
-        # self.driver.quit()
+        self.driver.quit()
 
     def startPlay(self):
 
@@ -97,14 +97,13 @@ class treeSolution:
             classes = ul.find_elements(By.TAG_NAME, 'li')[: -1]
             print("-" * 50)
             for per_class in classes:
+                print(' '.join(per_class.text.split()[: -1]), end=" ")
                 try:
                     per_class.find_element(By.CLASS_NAME, 'time_ico_half')
                 except:
-                    print(' '.join(per_class.text.split()[: -1]), end=" ")
                     print("完成")
                     continue
                 else: 
-                    print(' '.join(per_class.text.split()[: -1]), end=" ")
                     if len(per_class.find_elements(By.CLASS_NAME, 'time_icofinish')) == 1:
                         print("完成")
                         continue

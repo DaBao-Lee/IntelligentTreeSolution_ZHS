@@ -75,15 +75,13 @@ class treeSolution:
                     self.driver.get("https://onlineweb.zhihuishu.com/onlinestuh5")
                 classes = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'courseName')))
                 classes[index].click()
+                try: 
+                    if self.driver.find_element(By.CLASS_NAME, 'el-message__content'):
+                        print("该课程尚未开始 跳过")
+                        continue
+                except: pass
                 self.startPlay()
                 
-        y_n = input("是否播放指定地址课程:[y/n]")
-        if y_n.lower() == 'y':
-            pointed_url = input("输入指定课程地址:")
-            print("播放指定课程:", pointed_url)
-            self.driver.get(pointed_url)
-            time.sleep(1.5)
-            self.startPlay()
         self.driver.quit()
 
     def startPlay(self):
@@ -97,7 +95,7 @@ class treeSolution:
             classes = ul.find_elements(By.TAG_NAME, 'li')[: -1]
             print("-" * 50)
             for per_class in classes:
-                print(' '.join(per_class.text.split()[: -1]), end=" ")
+                print(' '.join(per_class.text.split()[: -1]) if len(per_class.text.split()) > 2 else per_class.text, end=" ")
                 try:
                     per_class.find_element(By.CLASS_NAME, 'time_ico_half')
                 except:
@@ -119,7 +117,7 @@ class treeSolution:
                         else:
                             print(f"\r{''.join(per_class.text.split()[: -1])}", end=" ")
                     except: pass
-                print(" 完成")
+                print("完成")
 
         print("学习结束".center(60, '-'))
 
@@ -142,10 +140,6 @@ class treeSolution:
                 self.driver.find_elements(By.CLASS_NAME, 'item-topic')[0].click()
                 self.driver.find_element(By.XPATH, '//*[@id="playTopic-dialog"]/div/div[3]/span/div').click()
                 self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'videoArea'))).click()
-            except: pass
-            try: 
-                if self.driver.find_element(By.CLASS_NAME, 'el-message__content'):
-                    print("该课程尚未开始 跳过")
             except: pass
             try:
                 if self.driver.find_element(By.XPATH, '//*[@id="form-ipt-error-l-username"]').text == '手机号或密码错误':

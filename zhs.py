@@ -30,7 +30,6 @@ class treeSolution:
         self.wait.until(lambda x: self.driver.current_url == 'https://onlineweb.zhihuishu.com/onlinestuh5') 
         print("登入成功".center(60, '-'))
         classes = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'item-left-course')))
-        print(f'目前还需要上{len(classes)}节课.')
         self.autoPlay(len(classes))
 
     def passCaptia(self):
@@ -78,6 +77,7 @@ class treeSolution:
                 try: 
                     if self.driver.find_element(By.CLASS_NAME, 'el-message__content'):
                         print("该课程尚未开始 跳过")
+                        time.sleep(2.5)
                         continue
                 except: pass
                 self.startPlay()
@@ -105,8 +105,7 @@ class treeSolution:
                     if len(per_class.find_elements(By.CLASS_NAME, 'time_icofinish')) == 1:
                         print("完成")
                         continue
-                per_class.click()
-                time.sleep(1.5)
+                time.sleep(0.5)
                 per_class.click()
                 time.sleep(1.5)
                 self.speedChange()
@@ -141,10 +140,6 @@ class treeSolution:
                 self.driver.find_element(By.XPATH, '//*[@id="playTopic-dialog"]/div/div[3]/span/div').click()
                 self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'videoArea'))).click()
             except: pass
-            try:
-                if self.driver.find_element(By.XPATH, '//*[@id="form-ipt-error-l-username"]').text == '手机号或密码错误':
-                    print("手机号或密码错误!")
-            except: pass
             time.sleep(0.1)
 
 def login():
@@ -161,17 +156,13 @@ def login():
 
 if __name__ == "__main__":
     if os.path.exists('../user.txt'):
-        if len(sys.argv) > 1 and sys.argv[1: ][0] == "-y":
-            y_n = 'y'
-        else:
-            y_n = input("发现已有用户, 是否选择登入:[y/n]")
+        if len(sys.argv) > 1 and sys.argv[1: ][0] == "-y": y_n = 'y'
+        else: y_n = input("发现已有用户, 是否选择登入:[y/n]")
         if y_n.lower() == 'y':
             log = open("../user.txt", 'r')
             username = log.readline().strip()
             mm = log.readline().strip()
             treeSolution(username, mm)
-        else:
-            login()
-    else:
-        login()
+        else: login()
+    else: login()
         

@@ -118,29 +118,62 @@ class treeSolution:
                     except: pass
                 print("完成")
 
+        self.faceToFace()
         print("学习结束".center(60, '-'))
 
-    def speedChange(self):
+    def faceToFace(self):
+
+        self.driver.find_element(By.CLASS_NAME, 'homeworkExam').click()
+        self.driver.switch_to.window(self.driver.window_handles[-1])
+        time.sleep(1.5)
+        try: 
+            self.driver.find_element(By.CLASS_NAME, 'melightgreen_color').click()
+            time.sleep(1.5)
+            self.driver.switch_to.window(self.driver.window_handles[-1])
+            time.sleep(1.5)
+            video_list = self.wait.until(EC.presence_of_element_located((By.ID, 'videoList')))
+            videos = video_list.find_elements(By.CLASS_NAME, 'videomenu')
+            print("-" * 50)
+            print("开始播放见面课")
+            for video in videos:
+                video.click()
+                time.sleep(1)
+                self.speedChange(areaClick=True)
+                while True:
+                    progress = video.find_element(By.TAG_NAME, 'span').text
+                    print(f"\r见面课进度: {progress}", end=" ")
+                    if int(progress.strip("%")) > 82:
+                        break
+                print("\r见面课进度已达80% 学习完成")
+        except: pass
+
+    def speedChange(self, areaClick=False):
         try:
             self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'videoArea'))).click()
             time.sleep(0.5)
-            self.driver.find_element(By.XPATH, '//*[@id="vjs_container"]/div[10]/div[7]/div[1]').click()
-            self.driver.find_element(By.XPATH, '//*[@id="vjs_container"]/div[10]/div[9]').click()
-            self.driver.find_element(By.XPATH, '//*[@id="vjs_container"]/div[10]/div[9]/div/div[1]').click()
+            self.driver.find_element(By.CLASS_NAME, 'speedBox').click()
+            self.driver.find_element(By.CLASS_NAME, 'speedTab15').click()
+            self.driver.find_element(By.CLASS_NAME, 'volumeIcon').click()
+            if areaClick: 
+                time.sleep(0.5)
+                self.driver.find_element(By.CLASS_NAME, 'videoArea').click()
         except: pass
 
     def errorCheck(self):
 
         while True:
-            try:
-                self.driver.find_element(By.XPATH, '//*[@id="app"]/div/div[6]/div[2]/div[1]/i').click()
+            try: self.driver.find_element(By.XPATH, '//*[@id="app"]/div/div[6]/div[2]/div[1]/i').click()
             except: pass
             try:
                 self.driver.find_elements(By.CLASS_NAME, 'item-topic')[0].click()
                 self.driver.find_element(By.XPATH, '//*[@id="playTopic-dialog"]/div/div[3]/span/div').click()
                 self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'videoArea'))).click()
             except: pass
-            time.sleep(0.1)
+            try: self.driver.find_element(By.CLASS_NAME, 'popbtn_yes').click()
+            except: pass
+            try: self.driver.find_element(By.CLASS_NAME, 'popboxes_close').click()
+            except: pass
+            time.sleep(0.1)  
 
 def login():
     username = input("输入手机号:")

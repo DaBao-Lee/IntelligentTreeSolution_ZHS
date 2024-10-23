@@ -68,19 +68,18 @@ class treeSolution:
 
     def autoPlay(self, length=0):
         
-        if length != 0:
-            for index in range(length):
-                if self.driver.current_url != "https://onlineweb.zhihuishu.com/onlinestuh5":
-                    self.driver.get("https://onlineweb.zhihuishu.com/onlinestuh5")
-                classes = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'courseName')))
-                classes[index].click()
-                try: 
-                    if self.driver.find_element(By.CLASS_NAME, 'el-message__content'):
-                        print("该课程尚未开始 跳过")
-                        time.sleep(2.5)
-                        continue
-                except: pass
-                self.startPlay()
+        for index in range(length):
+            if self.driver.current_url != "https://onlineweb.zhihuishu.com/onlinestuh5":
+                self.driver.get("https://onlineweb.zhihuishu.com/onlinestuh5")
+            classes = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'courseName')))
+            classes[index].click()
+            try: 
+                if self.driver.find_element(By.CLASS_NAME, 'el-message__content'):
+                    print("该课程尚未开始 跳过")
+                    time.sleep(2.5)
+                    continue
+            except: pass
+            self.startPlay()
                 
         self.driver.quit()
 
@@ -130,7 +129,7 @@ class treeSolution:
             self.driver.find_element(By.CLASS_NAME, 'melightgreen_color').click()
             time.sleep(1.5)
             self.driver.switch_to.window(self.driver.window_handles[-1])
-            time.sleep(1.5)
+            time.sleep(1)
             video_list = self.wait.until(EC.presence_of_element_located((By.ID, 'videoList')))
             videos = video_list.find_elements(By.CLASS_NAME, 'videomenu')
             print("-" * 50)

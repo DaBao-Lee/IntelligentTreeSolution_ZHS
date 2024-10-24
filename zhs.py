@@ -123,7 +123,7 @@ class treeSolution:
 
         self.driver.find_element(By.CLASS_NAME, 'homeworkExam').click()
         self.driver.switch_to.window(self.driver.window_handles[-1])
-        time.sleep(1.5)
+        time.sleep(2)
         try: 
             face_classes = [x for x in self.driver.find_elements(By.CLASS_NAME, 'melightgreen_color') if x.text == "回放"]
             tmp_url = self.driver.current_url
@@ -135,7 +135,6 @@ class treeSolution:
                 face_classes[index].click()
                 time.sleep(1)
                 self.driver.switch_to.window(self.driver.window_handles[-1])
-                time.sleep(1)
                 video_list = self.wait.until(EC.presence_of_element_located((By.ID, 'videoList')))
                 videos = video_list.find_elements(By.CLASS_NAME, 'videomenu')
                 print("-" * 50)
@@ -150,11 +149,6 @@ class treeSolution:
                         if int(progress.strip("%")) > 82:
                             break
                     print("\r见面课进度已达80% 学习完成")
-                if len(face_classes) > 1:
-                    self.driver.get(tmp_url)
-                    time.sleep(1)
-                    face_classes = [x for x in self.driver.find_elements(By.CLASS_NAME, 'melightgreen_color') if x.text == "回放"]
-                    face_classes.pop(0)
 
         except Exception as e: print(e)
 

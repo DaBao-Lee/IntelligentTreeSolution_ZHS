@@ -112,8 +112,7 @@ class treeSolution:
                     try:
                         if len(per_class.find_elements(By.CLASS_NAME, 'time_icofinish')) == 1:
                             break
-                        else:
-                            print(f"\r{''.join(per_class.text.split()[: -1])}", end=" ")
+                        else: print(f"\r{''.join(per_class.text.split()[: -1])}", end=" ")
                     except: pass
                 print("完成")
 
@@ -126,25 +125,38 @@ class treeSolution:
         self.driver.switch_to.window(self.driver.window_handles[-1])
         time.sleep(1.5)
         try: 
-            self.driver.find_element(By.CLASS_NAME, 'melightgreen_color').click()
-            time.sleep(1.5)
-            self.driver.switch_to.window(self.driver.window_handles[-1])
-            time.sleep(1)
-            video_list = self.wait.until(EC.presence_of_element_located((By.ID, 'videoList')))
-            videos = video_list.find_elements(By.CLASS_NAME, 'videomenu')
-            print("-" * 50)
-            print("开始播放见面课")
-            for video in videos:
-                video.click()
+            face_classes = [x for x in self.driver.find_elements(By.CLASS_NAME, 'melightgreen_color') if x.text == "回放"]
+            tmp_url = self.driver.current_url
+            for index in range(len(face_classes)):
+                if self.driver.current_url != tmp_url: 
+                    self.driver.get(tmp_url)
+                    time.sleep(1.5)
+                face_classes = [x for x in self.driver.find_elements(By.CLASS_NAME, 'melightgreen_color') if x.text == "回放"]
+                face_classes[index].click()
                 time.sleep(1)
-                self.speedChange(areaClick=True)
-                while True:
-                    progress = video.find_element(By.TAG_NAME, 'span').text
-                    print(f"\r见面课进度: {progress}", end=" ")
-                    if int(progress.strip("%")) > 82:
-                        break
-                print("\r见面课进度已达80% 学习完成")
-        except: pass
+                self.driver.switch_to.window(self.driver.window_handles[-1])
+                time.sleep(1)
+                video_list = self.wait.until(EC.presence_of_element_located((By.ID, 'videoList')))
+                videos = video_list.find_elements(By.CLASS_NAME, 'videomenu')
+                print("-" * 50)
+                print("开始播放见面课")
+                for video in videos:
+                    video.click()
+                    time.sleep(1)
+                    self.speedChange(areaClick=True)
+                    while True:
+                        progress = video.find_element(By.TAG_NAME, 'span').text
+                        print(f"\r见面课进度: {progress}", end=" ")
+                        if int(progress.strip("%")) > 82:
+                            break
+                    print("\r见面课进度已达80% 学习完成")
+                if len(face_classes) > 1:
+                    self.driver.get(tmp_url)
+                    time.sleep(1)
+                    face_classes = [x for x in self.driver.find_elements(By.CLASS_NAME, 'melightgreen_color') if x.text == "回放"]
+                    face_classes.pop(0)
+
+        except Exception as e: print(e)
 
     def speedChange(self, areaClick=False):
         try:

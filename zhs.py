@@ -70,25 +70,21 @@ class treeSolution:
     def autoPlay(self, length=0):
         
         for index in range(length):
+            self.driver.switch_to.window(self.driver.window_handles[-1])
             if self.driver.current_url != "https://onlineweb.zhihuishu.com/onlinestuh5":
                 self.driver.get("https://onlineweb.zhihuishu.com/onlinestuh5")
             classes = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'courseName')))
+            time.sleep(0.5)
             classes[index].click()
             try: 
                 if self.driver.find_element(By.CLASS_NAME, 'el-message__content'):
                     print("该课程尚未开始 跳过")
                     time.sleep(2.5)
                     continue
-            except: pass
-            try:
-                self.driver.find_element(By.CLASS_NAME, 'homeworkExam')
-                self.startPlayOriginalClass()
-            except:
-                self.startPlayNewClass()
-                
+            except: self.startPlayClass()
         self.driver.quit()
 
-    def startPlayOriginalClass(self):
+    def startPlayClass(self):
 
         print("开始学习".center(60, '-'))
         self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'tabTitle')))
@@ -99,7 +95,12 @@ class treeSolution:
             classes = ul.find_elements(By.TAG_NAME, 'li')[: -1]
             print("-" * 50)
             for per_class in classes:
-                print(' '.join(per_class.text.split()[: -1]) if len(per_class.text.split()) > 2 else per_class.text, end=" ")
+                print(" ".join(per_class.text.split()), end=" ")
+                try:
+                    if int(per_class.find_element(By.CLASS_NAME, 'progress-num').text.strip("%")) >= 82:
+                        print("完成")
+                        continue
+                except: pass
                 try:
                     per_class.find_element(By.CLASS_NAME, 'time_ico_half')
                 except:
@@ -111,7 +112,7 @@ class treeSolution:
                         continue
                 time.sleep(0.5)
                 per_class.click()
-                time.sleep(1.5)
+                time.sleep(1)
                 self.speedChange()
                 while True:
                     try:
@@ -119,59 +120,30 @@ class treeSolution:
                             break
                         else: print(f"\r{''.join(per_class.text.split()[: -1])}", end=" ")
                     except: pass
-                print("完成")
-
-        self.faceToFaceClass(type="old")
-        print("学习结束".center(60, '-'))
-
-    def startPlayNewClass(self):
-
-        print("开始学习".center(60, '-'))
-        self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'tabTitle')))
-        time.sleep(1.5)
-        uls = self.driver.find_elements(By.TAG_NAME, 'ul')
-        true_uls = [x for x in uls if x.get_attribute('class') == "list"]
-        for ul in true_uls:
-            classes = ul.find_elements(By.TAG_NAME, 'li')[: -1]
-            print("-" * 50)
-            for per_class in classes:
-                print(' '.join(per_class.text.split()[: -1]) if len(per_class.text.split()) > 2 else per_class.text, end=" ")
-                try:
-                    if int(per_class.find_element(By.CLASS_NAME, 'progress-num').text.strip("%")) >= 82:
-                        print("完成")
-                        continue
-                except: 
-                    print("完成")
-                    continue
-                time.sleep(0.5)
-                per_class.click()
-                time.sleep(1.5)
-                self.speedChange()
-                while True:
                     try:
                         if int(per_class.find_element(By.CLASS_NAME, 'progress-num').text.strip("%")) >= 82:
                             break
                         else: print(f"\r{''.join(per_class.text.split()[: -1])}", end=" ")
                     except: pass
                 print("完成")
-
-        self.driver.get("https://onlineweb.zhihuishu.com/onlinestuh5")
-        time.sleep(1.5)
-        right_item = self.driver.find_elements(By.CLASS_NAME, 'right-item-course')[self.index]
-        right_item.find_elements(By.CLASS_NAME, "course-menu-w")[-1].click()
-        time.sleep(1.5)
-        self.driver.switch_to.window(self.driver.window_handles[-1])
-        time.sleep(1.5)
+        time.sleep(0.5)
         self.faceToFaceClass()
-        self.index += 1
+        self.windowsManager()
         print("学习结束".center(60, '-'))
 
-    def faceToFaceClass(self, type="new"):
-
-        if type != "new":
+    def faceToFaceClass(self):
+        try:
             self.driver.find_element(By.CLASS_NAME, 'homeworkExam').click()
+            time.sleep(2.5)
             self.driver.switch_to.window(self.driver.window_handles[-1])
+        except:
+            self.driver.get("https://onlineweb.zhihuishu.com/onlinestuh5")
+            right_item = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'right-item-course')))[self.index]
+            right_item.find_elements(By.CLASS_NAME, "course-menu-w")[-1].click()
             time.sleep(2)
+            self.driver.switch_to.window(self.driver.window_handles[-1])
+            self.index += 1
+            print("学习结束".center(60, '-'))
         try: 
             face_classes = [x for x in self.driver.find_elements(By.CLASS_NAME, 'melightgreen_color') if x.text == "回放"]
             tmp_url = self.driver.current_url
@@ -187,6 +159,7 @@ class treeSolution:
                 videos = video_list.find_elements(By.CLASS_NAME, 'videomenu')
                 print("-" * 50)
                 print("开始播放见面课")
+                time.sleep(0.5)
                 for video in videos:
                     video.click()
                     time.sleep(1)
@@ -197,8 +170,7 @@ class treeSolution:
                         if int(progress.strip("%")) > 82:
                             break
                     print("\r见面课进度已达80% 学习完成")
-
-        except Exception as e: print(e)
+        except: print("暂无见面课可观看.")
 
     def speedChange(self, areaClick=False):
         try:
@@ -231,11 +203,17 @@ class treeSolution:
             try: self.driver.find_element(By.CLASS_NAME, 'popboxes_close').click()
             except: pass
             try: 
-                i = self.driver.find_elements(By.TAG_NAME, 'i')
-                true_i = [x for x in i if x.get_attribute("class") == 'el-icon-error']
+                true_i = [x for x in self.driver.find_elements(By.TAG_NAME, 'i') if x.get_attribute("class") == 'el-icon-error']
                 true_i[-1].click()
             except: pass
             time.sleep(0.1)  
+    
+    def windowsManager(self):
+
+        if len(self.driver.window_handles) > 2:
+            for window in self.driver.window_handles[:-1]:
+                self.driver.switch_to.window(window)
+                self.driver.close()
 
 def login():
     username = input("输入手机号:")

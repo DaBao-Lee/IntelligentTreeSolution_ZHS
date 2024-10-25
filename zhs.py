@@ -11,13 +11,14 @@ from  selenium.webdriver.support import expected_conditions as EC
 class treeSolution:
     def __init__(self, username:str, mm:str) -> None:
         
+        self.index = 0
         options = wb.EdgeOptions()
         options.add_experimental_option('excludeSwitches', ['enable-logging'])
         self.driver = wb.Edge(options=options)
         self.wait = WebDriverWait(self.driver, 10)
         self.driver.set_window_size(1200, 800)
         self.driver.get('https://passport.zhihuishu.com/login?service=https://onlineservice-api.zhihuishu.com/gateway/f/v1/login/gologin')
-        self.net = orc.InferenceSession("data/best.onnx")
+        self.net = orc.InferenceSession("best.onnx")
         self.action = ActionChains(self.driver)
         task = threading.Thread(target=self.errorCheck)
         task.daemon = True
@@ -30,7 +31,7 @@ class treeSolution:
         self.wait.until(lambda x: self.driver.current_url == 'https://onlineweb.zhihuishu.com/onlinestuh5') 
         print("登入成功".center(60, '-'))
         classes = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'item-left-course')))
-        self.autoPlay(len(classes))
+        # self.autoPlay(len(classes))
 
     def passCaptia(self):
 
@@ -120,7 +121,7 @@ class treeSolution:
                     except: pass
                 print("完成")
 
-        # self.faceToFaceOriginalClass()
+        self.faceToFaceClass(type="old")
         print("学习结束".center(60, '-'))
 
     def startPlayNewClass(self):
@@ -154,13 +155,22 @@ class treeSolution:
                     except: pass
                 print("完成")
 
-        print("学习结束".center(60, '-'))
-
-    def faceToFaceOriginalClass(self):
-
-        self.driver.find_element(By.CLASS_NAME, 'homeworkExam').click()
+        self.driver.get("https://onlineweb.zhihuishu.com/onlinestuh5")
+        time.sleep(1.5)
+        right_item = self.driver.find_elements(By.CLASS_NAME, 'right-item-course')[self.index]
+        right_item.find_elements(By.CLASS_NAME, "course-menu-w")[-1].click()
         self.driver.switch_to.window(self.driver.window_handles[-1])
         time.sleep(2)
+        self.faceToFaceClass()
+        self.index += 1
+        print("学习结束".center(60, '-'))
+
+    def faceToFaceClass(self, type="new"):
+
+        if type != "new":
+            self.driver.find_element(By.CLASS_NAME, 'homeworkExam').click()
+            self.driver.switch_to.window(self.driver.window_handles[-1])
+            time.sleep(2)
         try: 
             face_classes = [x for x in self.driver.find_elements(By.CLASS_NAME, 'melightgreen_color') if x.text == "回放"]
             tmp_url = self.driver.current_url

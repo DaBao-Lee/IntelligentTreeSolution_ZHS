@@ -17,7 +17,7 @@ class treeSolution:
         self.wait = WebDriverWait(self.driver, 10)
         self.driver.set_window_size(1200, 800)
         self.driver.get('https://passport.zhihuishu.com/login?service=https://onlineservice-api.zhihuishu.com/gateway/f/v1/login/gologin')
-        self.net = orc.InferenceSession("best.onnx")
+        self.net = orc.InferenceSession("data/best.onnx")
         self.action = ActionChains(self.driver)
         task = threading.Thread(target=self.errorCheck)
         task.daemon = True
@@ -79,11 +79,15 @@ class treeSolution:
                     time.sleep(2.5)
                     continue
             except: pass
-            self.startPlay()
+            try:
+                self.driver.find_element(By.CLASS_NAME, 'homeworkExam')
+                self.startPlayOriginalClass()
+            except:
+                self.startPlayNewClass()
                 
         self.driver.quit()
 
-    def startPlay(self):
+    def startPlayOriginalClass(self):
 
         print("开始学习".center(60, '-'))
         self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'tabTitle')))
@@ -116,10 +120,43 @@ class treeSolution:
                     except: pass
                 print("完成")
 
-        self.faceToFace()
+        # self.faceToFaceOriginalClass()
         print("学习结束".center(60, '-'))
 
-    def faceToFace(self):
+    def startPlayNewClass(self):
+
+        print("开始学习".center(60, '-'))
+        self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'tabTitle')))
+        time.sleep(1.5)
+        uls = self.driver.find_elements(By.TAG_NAME, 'ul')
+        true_uls = [x for x in uls if x.get_attribute('class') == "list"]
+        for ul in true_uls:
+            classes = ul.find_elements(By.TAG_NAME, 'li')[: -1]
+            print("-" * 50)
+            for per_class in classes:
+                print(' '.join(per_class.text.split()[: -1]) if len(per_class.text.split()) > 2 else per_class.text, end=" ")
+                try:
+                    if int(per_class.find_element(By.CLASS_NAME, 'progress-num').text.strip("%")) >= 82:
+                        print("完成")
+                        continue
+                except: 
+                    print("完成")
+                    continue
+                time.sleep(0.5)
+                per_class.click()
+                time.sleep(1.5)
+                self.speedChange()
+                while True:
+                    try:
+                        if int(per_class.find_element(By.CLASS_NAME, 'progress-num').text.strip("%")) >= 82:
+                            break
+                        else: print(f"\r{''.join(per_class.text.split()[: -1])}", end=" ")
+                    except: pass
+                print("完成")
+
+        print("学习结束".center(60, '-'))
+
+    def faceToFaceOriginalClass(self):
 
         self.driver.find_element(By.CLASS_NAME, 'homeworkExam').click()
         self.driver.switch_to.window(self.driver.window_handles[-1])
@@ -171,12 +208,21 @@ class treeSolution:
             except: pass
             try:
                 self.driver.find_elements(By.CLASS_NAME, 'item-topic')[0].click()
+                self.driver.find_element(By.CLASS_NAME, 'btn-content').click()
+            except: pass
+            try:
+                self.driver.find_elements(By.CLASS_NAME, 'item-topic')[0].click()
                 self.driver.find_element(By.XPATH, '//*[@id="playTopic-dialog"]/div/div[3]/span/div').click()
                 self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'videoArea'))).click()
             except: pass
             try: self.driver.find_element(By.CLASS_NAME, 'popbtn_yes').click()
             except: pass
             try: self.driver.find_element(By.CLASS_NAME, 'popboxes_close').click()
+            except: pass
+            try: 
+                i = self.driver.find_elements(By.TAG_NAME, 'i')
+                true_i = [x for x in i if x.get_attribute("class") == 'el-icon-error']
+                true_i[-1].click()
             except: pass
             time.sleep(0.1)  
 

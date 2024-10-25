@@ -31,7 +31,7 @@ class treeSolution:
         self.wait.until(lambda x: self.driver.current_url == 'https://onlineweb.zhihuishu.com/onlinestuh5') 
         print("登入成功".center(60, '-'))
         classes = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'item-left-course')))
-        # self.autoPlay(len(classes))
+        self.autoPlay(len(classes))
 
     def passCaptia(self):
 
@@ -159,8 +159,9 @@ class treeSolution:
         time.sleep(1.5)
         right_item = self.driver.find_elements(By.CLASS_NAME, 'right-item-course')[self.index]
         right_item.find_elements(By.CLASS_NAME, "course-menu-w")[-1].click()
+        time.sleep(1.5)
         self.driver.switch_to.window(self.driver.window_handles[-1])
-        time.sleep(2)
+        time.sleep(1.5)
         self.faceToFaceClass()
         self.index += 1
         print("学习结束".center(60, '-'))

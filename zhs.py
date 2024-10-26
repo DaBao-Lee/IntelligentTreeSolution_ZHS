@@ -3,22 +3,24 @@ import numpy as np
 import os, time, cv2, sys
 import onnxruntime as orc
 import selenium.webdriver as wb
+from question import questMoudle
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.action_chains import ActionChains
 from  selenium.webdriver.support import expected_conditions as EC
 
 class treeSolution:
-    def __init__(self, username:str, mm:str) -> None:
+    def __init__(self, username:str=None, mm:str=None) -> None:
         
         self.index = 0
         options = wb.EdgeOptions()
         options.add_experimental_option('excludeSwitches', ['enable-logging'])
         self.driver = wb.Edge(options=options)
+        self.quest = questMoudle(self.driver)
         self.wait = WebDriverWait(self.driver, 10)
         self.driver.set_window_size(1200, 800)
         self.driver.get('https://passport.zhihuishu.com/login?service=https://onlineservice-api.zhihuishu.com/gateway/f/v1/login/gologin')
-        self.net = orc.InferenceSession("best.onnx")
+        self.net = orc.InferenceSession("data/best.onnx")
         self.action = ActionChains(self.driver)
         task = threading.Thread(target=self.errorCheck)
         task.daemon = True
@@ -81,7 +83,11 @@ class treeSolution:
                     print("该课程尚未开始 跳过")
                     time.sleep(2.5)
                     continue
-            except: self.startPlayClass()
+            except: 
+                self.startPlayClass()
+                self.driver.switch_to.window(self.driver.window_handles[-1])
+                self.quest.startAnswer()
+            
         self.driver.quit()
 
     def startPlayClass(self):
@@ -95,7 +101,8 @@ class treeSolution:
             classes = ul.find_elements(By.TAG_NAME, 'li')[: -1]
             print("-" * 50)
             for per_class in classes:
-                print(" ".join(per_class.text.split()), end=" ")
+                class_title = per_class.text.split()
+                print(" ".join(class_title), end=" ")
                 try:
                     if int(per_class.find_element(By.CLASS_NAME, 'progress-num').text.strip("%")) >= 82:
                         print("完成")
@@ -118,17 +125,23 @@ class treeSolution:
                     try:
                         if len(per_class.find_elements(By.CLASS_NAME, 'time_icofinish')) == 1:
                             break
-                        else: print(f"\r{''.join(per_class.text.split()[: -1])}", end=" ")
+                        else:
+                            print(f"\r{' '.join(per_class.text.split()):<100}", end=" ")
                     except: pass
                     try:
-                        if int(per_class.find_element(By.CLASS_NAME, 'progress-num').text.strip("%")) >= 82:
+                        class_progress = per_class.find_element(By.CLASS_NAME, 'progress-num').text
+                        if int(class_progress.strip("%")) >= 82:
                             break
-                        else: print(f"\r{''.join(per_class.text.split()[: -1])}", end=" ")
+                        else: 
+                            print(f"\r{' '.join(per_class.text.split()):<100} {class_progress}", end=" ")
                     except: pass
                 print("完成")
         time.sleep(0.5)
         self.faceToFaceClass()
-        self.windowsManager()
+        if len(self.driver.window_handles) > 2:
+            for window in self.driver.window_handles[:-1]:
+                self.driver.switch_to.window(window)
+                self.driver.close()
         print("学习结束".center(60, '-'))
 
     def faceToFaceClass(self):
@@ -207,32 +220,24 @@ class treeSolution:
                 true_i[-1].click()
             except: pass
             time.sleep(0.1)  
-    
-    def windowsManager(self):
-
-        if len(self.driver.window_handles) > 2:
-            for window in self.driver.window_handles[:-1]:
-                self.driver.switch_to.window(window)
-                self.driver.close()
 
 def login():
     username = input("输入手机号:")
     mm = input("输入密码:")
     y_n = input("是否保存用户:[y/n]")
     if y_n.lower() == 'y':
-        log = open("../user.txt", '+w')
+        log = open("user.txt", '+w')
         log.write(username + '\n')
         log.write(mm)
     log.close()
-
     treeSolution(username, mm)
 
 if __name__ == "__main__":
-    if os.path.exists('../user.txt'):
+    if os.path.exists('user.txt'):
         if len(sys.argv) > 1 and sys.argv[1: ][0] == "-y": y_n = 'y'
         else: y_n = input("发现已有用户, 是否选择登入:[y/n]")
         if y_n.lower() == 'y':
-            log = open("../user.txt", 'r')
+            log = open("user.txt", 'r')
             username = log.readline().strip()
             mm = log.readline().strip()
             treeSolution(username, mm)

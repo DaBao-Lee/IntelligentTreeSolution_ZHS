@@ -133,7 +133,7 @@ class treeSolution:
                         if int(class_progress.strip("%")) >= 82:
                             break
                         else: 
-                            print(f"\r{' '.join(per_class.text.split()):<100} {class_progress}", end=" ")
+                            print(f"\r{' '.join(per_class.text.split()):<100}", end=" ")
                     except: pass
                 print("完成")
         time.sleep(0.5)

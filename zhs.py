@@ -126,14 +126,14 @@ class treeSolution:
                         if len(per_class.find_elements(By.CLASS_NAME, 'time_icofinish')) == 1:
                             break
                         else:
-                            print(f"\r{' '.join(per_class.text.split()):<45}", end=" ")
+                            print(f"\r{' '.join(per_class.text.split()):<40}", end=" ")
                     except: pass
                     try:
                         class_progress = per_class.find_element(By.CLASS_NAME, 'progress-num').text
                         if int(class_progress.strip("%")) >= 82:
                             break
                         else: 
-                            print(f"\r{' '.join(per_class.text.split()):<45}", end=" ")
+                            print(f"\r{' '.join(per_class.text.split()):<40}", end=" ")
                     except: pass
                 print("完成")
         time.sleep(0.5)

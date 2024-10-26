@@ -119,7 +119,7 @@ class treeSolution:
                         continue
                 time.sleep(0.5)
                 per_class.click()
-                time.sleep(1)
+                time.sleep(1.5)
                 self.speedChange()
                 while True:
                     try:

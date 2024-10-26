@@ -226,18 +226,18 @@ def login():
     mm = input("输入密码:")
     y_n = input("是否保存用户:[y/n]")
     if y_n.lower() == 'y':
-        log = open("user.txt", '+w')
+        log = open("../user.txt", '+w')
         log.write(username + '\n')
         log.write(mm)
     log.close()
     treeSolution(username, mm)
 
 if __name__ == "__main__":
-    if os.path.exists('user.txt'):
+    if os.path.exists('../user.txt'):
         if len(sys.argv) > 1 and sys.argv[1: ][0] == "-y": y_n = 'y'
         else: y_n = input("发现已有用户, 是否选择登入:[y/n]")
         if y_n.lower() == 'y':
-            log = open("user.txt", 'r')
+            log = open("../user.txt", 'r')
             username = log.readline().strip()
             mm = log.readline().strip()
             treeSolution(username, mm)

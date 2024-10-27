@@ -1,8 +1,11 @@
 import threading
 import numpy as np
+from colorama import Fore
 import os, time, cv2, sys
 import onnxruntime as orc
 import selenium.webdriver as wb
+path = os.path.abspath("zhs.py")
+sys.path.append("\\".join(path.split("\\")[: -1]))
 from question import questMoudle
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -10,15 +13,16 @@ from selenium.webdriver.common.action_chains import ActionChains
 from  selenium.webdriver.support import expected_conditions as EC
 
 class treeSolution:
-    def __init__(self, username:str=None, mm:str=None) -> None:
+    def __init__(self, username:str=None, mm:str=None, arg=None) -> None:
         
         self.index = 0
         options = wb.EdgeOptions()
-        options.add_experimental_option('excludeSwitches', ['enable-logging'])
+        if arg == "--headless": options.add_argument('--headless')
+        else: options.add_experimental_option('excludeSwitches', ['enable-logging'])
         self.driver = wb.Edge(options=options)
         self.quest = questMoudle(self.driver)
         self.wait = WebDriverWait(self.driver, 10)
-        self.driver.set_window_size(1200, 800)
+        self.driver.set_window_size(1100, 800)
         self.driver.get('https://passport.zhihuishu.com/login?service=https://onlineservice-api.zhihuishu.com/gateway/f/v1/login/gologin')
         self.net = orc.InferenceSession("data/best.onnx")
         self.action = ActionChains(self.driver)
@@ -30,9 +34,8 @@ class treeSolution:
         self.driver.find_element(By.XPATH, '//*[@id="f_sign_up"]/div[1]/span').click()
         time.sleep(1)
         while self.passCaptia(): pass
-        self.wait.until(lambda x: self.driver.current_url == 'https://onlineweb.zhihuishu.com/onlinestuh5') 
-        print("登入成功".center(60, '-'))
         classes = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'item-left-course')))
+        print(Fore.GREEN + "登入成功".center(60, '-'))
         self.autoPlay(len(classes))
 
     def passCaptia(self):
@@ -87,19 +90,20 @@ class treeSolution:
                 self.startPlayClass()
                 self.driver.switch_to.window(self.driver.window_handles[-1])
                 self.quest.startAnswer()
-            
+                print("该门课已学习完毕".center(57, '-'))
+        print("所有课程均已学习完毕".center(55, '-'))
         self.driver.quit()
 
     def startPlayClass(self):
 
-        print("开始学习".center(60, '-'))
         self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'tabTitle')))
         time.sleep(1.5)
+        print("开始学习课程:", self.driver.find_element(By.CLASS_NAME, 'source-name').text)
         uls = self.driver.find_elements(By.TAG_NAME, 'ul')
         true_uls = [x for x in uls if x.get_attribute('class') == "list"]
         for ul in true_uls:
+            print('-' * 64)
             classes = ul.find_elements(By.TAG_NAME, 'li')[: -1]
-            print("-" * 50)
             for per_class in classes:
                 print(" ".join(per_class.text.split()), end=" ")
                 try:
@@ -137,16 +141,11 @@ class treeSolution:
                 print("完成")
         time.sleep(0.5)
         self.faceToFaceClass()
-        if len(self.driver.window_handles) > 2:
-            for window in self.driver.window_handles[:-1]:
-                self.driver.switch_to.window(window)
-                self.driver.close()
-        print("学习结束".center(60, '-'))
 
     def faceToFaceClass(self):
         try:
             self.driver.find_element(By.CLASS_NAME, 'homeworkExam').click()
-            time.sleep(2.5)
+            time.sleep(2)
             self.driver.switch_to.window(self.driver.window_handles[-1])
         except:
             self.driver.get("https://onlineweb.zhihuishu.com/onlinestuh5")
@@ -155,7 +154,6 @@ class treeSolution:
             time.sleep(2)
             self.driver.switch_to.window(self.driver.window_handles[-1])
             self.index += 1
-            print("学习结束".center(60, '-'))
         try: 
             face_classes = [x for x in self.driver.find_elements(By.CLASS_NAME, 'melightgreen_color') if x.text == "回放"]
             tmp_url = self.driver.current_url
@@ -169,7 +167,7 @@ class treeSolution:
                 self.driver.switch_to.window(self.driver.window_handles[-1])
                 video_list = self.wait.until(EC.presence_of_element_located((By.ID, 'videoList')))
                 videos = video_list.find_elements(By.CLASS_NAME, 'videomenu')
-                print("-" * 50)
+                print("-" * 64)
                 print("开始播放见面课")
                 time.sleep(0.5)
                 for video in videos:
@@ -194,7 +192,7 @@ class treeSolution:
             if areaClick: 
                 time.sleep(0.5)
                 self.driver.find_element(By.CLASS_NAME, 'videoArea').click()
-        except: pass
+        except: pass      
 
     def errorCheck(self):
 
@@ -206,7 +204,10 @@ class treeSolution:
                 self.driver.find_element(By.CLASS_NAME, 'btn-content').click()
             except: pass
             try:
-                self.driver.find_elements(By.CLASS_NAME, 'item-topic')[0].click()
+                numbers = self.driver.find_element(By.CLASS_NAME, 'el-pager').find_elements(By.CLASS_NAME, "number")
+                for number in numbers:
+                    number.click()
+                    self.driver.find_elements(By.CLASS_NAME, 'item-topic')[0].click()
                 self.driver.find_element(By.XPATH, '//*[@id="playTopic-dialog"]/div/div[3]/span/div').click()
                 self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'videoArea'))).click()
             except: pass
@@ -218,6 +219,11 @@ class treeSolution:
                 true_i = [x for x in self.driver.find_elements(By.TAG_NAME, 'i') if x.get_attribute("class") == 'el-icon-error']
                 true_i[-1].click()
             except: pass
+            if len(self.driver.window_handles) > 2:
+                for window in self.driver.window_handles[: -2]:
+                    self.driver.switch_to.window(window)
+                    self.driver.close()
+                self.driver.switch_to.window(self.driver.window_handles[-1])
             time.sleep(0.1)  
 
 def login():
@@ -233,13 +239,15 @@ def login():
 
 if __name__ == "__main__":
     if os.path.exists('../user.txt'):
-        if len(sys.argv) > 1 and sys.argv[1: ][0] == "-y": y_n = 'y'
+        if len(sys.argv) > 1:
+            if sys.argv[1] == "-y": y_n = 'y'
         else: y_n = input("发现已有用户, 是否选择登入:[y/n]")
+        arg = sys.argv[-1] if sys.argv[-1] == "--headless" else None
         if y_n.lower() == 'y':
             log = open("../user.txt", 'r')
             username = log.readline().strip()
             mm = log.readline().strip()
-            treeSolution(username, mm)
+            treeSolution(username, mm, arg)
         else: login()
     else: login()
         

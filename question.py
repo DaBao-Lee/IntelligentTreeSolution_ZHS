@@ -1,4 +1,5 @@
 import numpy as np
+from fuzzywuzzy import fuzz
 from paddleocr import PaddleOCR
 import selenium.webdriver as wb
 import os, time, cv2, json, logging, re
@@ -36,14 +37,14 @@ class questMoudle:
             ok = self.wait.until(EC.presence_of_element_located((By.ID, 'examStateTabWsj')))
             time.sleep(2)
             charpters = self.driver.find_elements(By.CLASS_NAME, 'examItemWrap')
-            charpters = [x for x in charpters if x.find_element(By.CLASS_NAME, 'percentage_number').text in ["作业", "见面课测验"]]
-            if len(charpters) == 0: print("所有见面课或单元测试均已完成.")
-            for index in range(len(charpters)):
+            charpters = [x for x in charpters if x.find_element(By.CLASS_NAME, 'percentage_number').text in ["作业"]]
+            if len(charpters) == 0: print("所有单元测试均已完成.")
+            for index in range(len(charpters)): # ?
                 if self.driver.current_url != tmp_url:
                     self.driver.get(tmp_url)
                     time.sleep(3)
                 charpters = self.driver.find_elements(By.CLASS_NAME, 'examItemWrap')
-                charpters = [x for x in charpters if x.find_element(By.CLASS_NAME, 'percentage_number').text in ["作业", "见面课测验"]]
+                charpters = [x for x in charpters if x.find_element(By.CLASS_NAME, 'percentage_number').text in ["作业"]]
                 charpters[index].find_element(By.CLASS_NAME, "themeBg").click()
                 time.sleep(3)
                 self.driver.switch_to.window(self.driver.window_handles[-1])
@@ -79,16 +80,13 @@ class questMoudle:
                         for arg in args:
                             answers[arg].click()
                     self.driver.find_elements(By.CLASS_NAME, 'el-button--primary')[-1].click()
-                    time.sleep(0.5)
-                    self.driver.find_element(By.CLASS_NAME, 'btnStyleXSumit').click()
-                    time.sleep(0.5)
-                    self.driver.find_element(By.XPATH, '/html/body/div[5]/div/div[3]/button[2]').click()
-                    time.sleep(0.9)
-                    windows = self.driver.window_handles
-                    for window in windows[: -1]:
-                        self.driver.switch_to.window(window)
-                        time.sleep(0.3)
-                        self.driver.close()
+                    time.sleep(0.8)
+                self.driver.find_element(By.CLASS_NAME, 'btnStyleXSumit').click()
+                time.sleep(1.5)
+                self.driver.find_elements(By.CLASS_NAME, 'el-button--default')[-1].click()
+                time.sleep(0.5)
+                self.driver.close()
+                time.sleep(1)
         else:
             print("暂未有该门课程答案 停止作答.")
         self.index += 1
@@ -97,11 +95,8 @@ class questMoudle:
 
         scores = []
         for question in dic.keys():
-            score = 0
-            for alpha in txt:
-                if alpha in question:
-                    score += 1 
-            scores.append(score / len(question))
+            score = fuzz.partial_ratio(question, txt)
+            scores.append(score)
         arg = np.array(scores).argmax()
 
         return arg

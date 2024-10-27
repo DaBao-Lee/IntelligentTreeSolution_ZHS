@@ -98,7 +98,8 @@ class treeSolution:
 
         self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'tabTitle')))
         time.sleep(1.5)
-        print("开始学习课程:", self.driver.find_element(By.CLASS_NAME, 'source-name').text)
+        try: print("开始学习课程:", self.driver.find_element(By.CLASS_NAME, 'source-name').text)
+        except: print("开始学习课程")
         uls = self.driver.find_elements(By.TAG_NAME, 'ul')
         true_uls = [x for x in uls if x.get_attribute('class') == "list"]
         for ul in true_uls:

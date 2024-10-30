@@ -29,7 +29,8 @@ class questMoudle:
         if os.path.exists(f"data/{courseName}.json"):
             self.js = json.load(open(f"data/{courseName}.json", encoding="utf-8"))
             print(courseName + "题库已加载完成")
-            rightItem = self.driver.find_elements(By.CLASS_NAME, 'right-item-course')[self.index]
+            try: rightItem = self.driver.find_elements(By.CLASS_NAME, 'right-item-course')[self.index]
+            except: rightItem = self.driver.find_elements(By.CLASS_NAME, 'right-item-course')[self.index-1]
             rightItem.find_elements(By.CLASS_NAME, "course-menu-w")[1].click()
             time.sleep(2)
             self.driver.switch_to.window(self.driver.window_handles[-1])
@@ -41,6 +42,7 @@ class questMoudle:
             if len(charpters) == 0: print("所有单元测试均已完成.")
             for index in range(len(charpters)): # ?
                 self.driver.switch_to.window(self.driver.window_handles[-1])
+                time.sleep(1)
                 if self.driver.current_url != tmp_url:
                     self.driver.get(tmp_url)
                     time.sleep(3)

@@ -35,29 +35,30 @@ class questMoudle:
             self.driver.switch_to.window(self.driver.window_handles[-1])
             tmp_url = self.driver.current_url
             ok = self.wait.until(EC.presence_of_element_located((By.ID, 'examStateTabWsj')))
-            time.sleep(2)
+            time.sleep(0.5)
             charpters = self.driver.find_elements(By.CLASS_NAME, 'examItemWrap')
             charpters = [x for x in charpters if x.find_element(By.CLASS_NAME, 'percentage_number').text in ["作业"]]
             if len(charpters) == 0: print("所有单元测试均已完成.")
             for index in range(len(charpters)): # ?
+                self.driver.switch_to.window(self.driver.window_handles[-1])
                 if self.driver.current_url != tmp_url:
                     self.driver.get(tmp_url)
                     time.sleep(3)
                 charpters = self.driver.find_elements(By.CLASS_NAME, 'examItemWrap')
                 charpters = [x for x in charpters if x.find_element(By.CLASS_NAME, 'percentage_number').text in ["作业"]]
-                charpters[index].find_element(By.CLASS_NAME, "themeBg").click()
-                time.sleep(3)
+                charpters[0].find_element(By.CLASS_NAME, "themeBg").click()
+                time.sleep(1.5)
                 self.driver.switch_to.window(self.driver.window_handles[-1])
+                time.sleep(1.5)
                 problems = self.driver.find_elements(By.CLASS_NAME, "subject_type_describe")
                 for index in range(len(problems)):
                     img_btyes = problems[index].screenshot_as_png
                     img = cv2.imdecode(np.frombuffer(img_btyes, np.uint8), 1)
                     results = self.ocr.ocr(img)
-                    time.sleep(0.8)
                     txt = ''
                     for result in results[0][1: ]:
                         txt += result[-1][0]
-                    txt = re.sub(r"[a-zA-z、】（）()【。，·？！：“”：；,.?';:~\!`]", '', txt)
+                    txt = re.sub(r"[、】（）()【。，·？！：“”：；,.?';:~\!`]", '', txt)
                     arg = self.similarityCalc(txt, self.js)
                     true_answer = self.js[list(self.js.keys())[arg]]
                     answers_box = self.driver.find_elements(By.CLASS_NAME, 'subject_node')[index]
@@ -80,13 +81,13 @@ class questMoudle:
                         for arg in args:
                             answers[arg].click()
                     self.driver.find_elements(By.CLASS_NAME, 'el-button--primary')[-1].click()
-                    time.sleep(0.8)
+                    time.sleep(1)
                 self.driver.find_element(By.CLASS_NAME, 'btnStyleXSumit').click()
                 time.sleep(1.5)
                 self.driver.find_elements(By.CLASS_NAME, 'el-button--default')[-1].click()
                 time.sleep(0.5)
                 self.driver.close()
-                time.sleep(1)
+
         else:
             print("暂未有该门课程答案 停止作答.")
         self.index += 1

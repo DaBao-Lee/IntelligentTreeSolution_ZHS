@@ -35,7 +35,7 @@ class treeSolution:
         time.sleep(1)
         while self.passCaptia(): pass
         classes = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'item-left-course')))
-        print(Fore.GREEN + "登入成功".center(60, '-'))
+        print(Fore.LIGHTYELLOW_EX + "登入成功".center(60, '-'))
         self.autoPlay(len(classes))
 
     def passCaptia(self):

@@ -88,7 +88,7 @@ class questMoudle:
                 self.driver.close()
         else:
             print("暂未有该门课程答案 停止作答.")
-            print('-' * 64)
+        print('-' * 64)
 
     def similarityCalc(self, txt:any, dic:dict):
 

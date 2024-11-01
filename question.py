@@ -13,25 +13,23 @@ class questMoudle:
     def __init__(self, driver: wb.Edge) -> None:
         super().__init__()
 
-        self.index = 0
         self.driver = driver
         self.wait = WebDriverWait(self.driver, 10)
         self.ocr = PaddleOCR(use_angle_cls=True, lang="ch", use_gpu=True)
         self.js = None
         
-    def startAnswer(self):
+    def startAnswer(self, toPlay):
         
         print("答题模式".center(60, '-'))
         if self.driver.current_url != "https://onlineweb.zhihuishu.com/onlinestuh5":
             self.driver.get("https://onlineweb.zhihuishu.com/onlinestuh5")
         time.sleep(1.5)
-        courseName = self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'courseName')))[self.index].text
+        className = toPlay.find_element(By.CLASS_NAME, 'courseName')
+        courseName = className.text
         if os.path.exists(f"data/{courseName}.json"):
             self.js = json.load(open(f"data/{courseName}.json", encoding="utf-8"))
             print(courseName + "题库已加载完成")
-            try: rightItem = self.driver.find_elements(By.CLASS_NAME, 'right-item-course')[self.index]
-            except: rightItem = self.driver.find_elements(By.CLASS_NAME, 'right-item-course')[self.index-1]
-            rightItem.find_elements(By.CLASS_NAME, "course-menu-w")[1].click()
+            toPlay.find_elements(By.CLASS_NAME, "course-menu-w")[1].click()
             time.sleep(2)
             self.driver.switch_to.window(self.driver.window_handles[-1])
             tmp_url = self.driver.current_url
@@ -89,10 +87,8 @@ class questMoudle:
                 self.driver.find_elements(By.CLASS_NAME, 'el-button--default')[-1].click()
                 time.sleep(0.5)
                 self.driver.close()
-
         else:
             print("暂未有该门课程答案 停止作答.")
-        self.index += 1
 
     def similarityCalc(self, txt:any, dic:dict):
 

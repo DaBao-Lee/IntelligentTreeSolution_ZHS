@@ -102,8 +102,8 @@ class treeSolution:
                 if self.flag: self.quest.startAnswer(toPlay)
             except: pass
         print("学习结束".center(60, '-'))
-        self.task.join()
         self.driver.quit()
+        sys.exit()
 
     def classLearn(self, toPlay):
         

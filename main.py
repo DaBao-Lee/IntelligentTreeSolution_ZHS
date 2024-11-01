@@ -101,7 +101,6 @@ class treeSolution:
                 self.mainWindow()
                 toPlay = self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList')[index]
                 self.quest.startAnswer(toPlay)
-                print('-' * 64)
             except: pass
         print("学习结束".center(60, '-'))
         self.driver.quit()
@@ -113,7 +112,7 @@ class treeSolution:
         except: 
             print(f"【{className.text}】 该课程尚未开始 跳过")
         else:
-            print(f"开始学习课程:, 【{className.text}】")
+            print(f"开始学习课程: 【{className.text}】")
             className.click()
             self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'tabTitle')))
             time.sleep(1.5)

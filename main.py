@@ -21,21 +21,16 @@ class treeSolution:
         self.driver = wb.Edge(options=options)
         self.quest = questMoudle(self.driver)
         self.action = ActionChains(self.driver)
-        self.wait = WebDriverWait(self.driver, 8)
+        self.wait = WebDriverWait(self.driver, 5)
         self.driver.set_window_size(1200, 800)
-        self.driver.get('https://passport.zhihuishu.com/login?service=https://onlineservice-api.zhihuishu.com/gateway/f/v1/login/gologin')
+        self.driver.get('https://onlineweb.zhihuishu.com/onlinestuh5')
         self.net = orc.InferenceSession("data/best.onnx")
         threading.Thread(target=self.errorCheck, daemon=True).start()
         self.wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="lUsername"]'))).send_keys(str(username))
         self.driver.find_element(By.XPATH, '//*[@id="lPassword"]').send_keys(str(mm))
         self.driver.find_element(By.XPATH, '//*[@id="f_sign_up"]/div[1]/span').click()
-        time.sleep(1)
+        time.sleep(0.8)
         while self.passCaptia(): pass
-        try: self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'item-left-course')))
-        except: 
-            self.driver.refresh()
-            time.sleep(1)
-            self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'item-left-course')))
         print(Fore.LIGHTYELLOW_EX + "登入成功".center(60, '-'))
         self.controlCenter()
 
@@ -87,13 +82,12 @@ class treeSolution:
 
     def controlCenter(self):
 
+        self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'item-left-course')))
         needToPlay = len(self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList'))
-
         for index in range(needToPlay):
             self.mainWindow()
             toPlay = self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList')[index]
             self.classLearn(toPlay)
-            print("-" * 64)
             self.mainWindow()
             try:
                 toPlay = self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList')[index]
@@ -104,6 +98,7 @@ class treeSolution:
             except: pass
         print("学习结束".center(60, '-'))
         self.driver.quit()
+        time.sleep(0.8)
 
     def classLearn(self, toPlay):
         
@@ -158,6 +153,7 @@ class treeSolution:
                             print(f"\r{' '.join(per_class.text.split())}", end=" ")
                         print("完成")
                 time.sleep(0.5)
+            print("章节视频学习完成".center(56, '-'))
 
     def faceToFaceClass(self, toPlay):
 
@@ -175,6 +171,7 @@ class treeSolution:
                 face_classes[index].click()
                 time.sleep(1)
                 self.driver.switch_to.window(self.driver.window_handles[-1])
+                if int(self.driver.find_element(By.CLASS_NAME, 'qiandao-num').text) >= 82: continue
                 video_list = self.wait.until(EC.presence_of_element_located((By.ID, 'videoList')))
                 videos = video_list.find_elements(By.CLASS_NAME, 'videomenu')
                 time.sleep(0.5)
@@ -189,7 +186,7 @@ class treeSolution:
                             break
                     print("\r见面课进度已达80% 学习完成")
         except: print("暂无见面课可观看.")
-        print('-' * 64)
+        print('见面课播放完毕'.center(57, '-'))
         
     def speedChange(self, areaClick=False):
         try:

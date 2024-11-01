@@ -73,6 +73,8 @@ class treeSolution:
 
     def mainWindow(self):
 
+        self.driver.switch_to.window(self.driver.window_handles[-1])
+        time.sleep(0.5)
         if self.driver.current_url != "https://onlineweb.zhihuishu.com/onlinestuh5":
             self.driver.get("https://onlineweb.zhihuishu.com/onlinestuh5")
             try:

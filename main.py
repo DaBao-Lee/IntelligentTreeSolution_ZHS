@@ -19,7 +19,10 @@ class treeSolution:
         if arg == "--headless": options.add_argument('--headless')
         else: options.add_experimental_option('excludeSwitches', ['enable-logging'])
         self.driver = wb.Edge(options=options)
-        self.quest = questMoudle(self.driver)
+        try:
+            self.flag = True 
+            self.quest = questMoudle(self.driver)
+        except: self.flag = False 
         self.action = ActionChains(self.driver)
         self.wait = WebDriverWait(self.driver, 5)
         self.driver.set_window_size(1200, 800)
@@ -94,11 +97,10 @@ class treeSolution:
                 self.faceToFaceClass(toPlay)
                 self.mainWindow()
                 toPlay = self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList')[index]
-                self.quest.startAnswer(toPlay)
+                if self.flag: self.quest.startAnswer(toPlay)
             except: pass
         print("学习结束".center(60, '-'))
         self.driver.quit()
-        time.sleep(0.8)
 
     def classLearn(self, toPlay):
         
@@ -240,7 +242,7 @@ def login():
         log = open("../user.txt", '+w')
         log.write(username + '\n')
         log.write(mm)
-    log.close()
+        log.close()
     treeSolution(username, mm)
 
 if __name__ == "__main__":

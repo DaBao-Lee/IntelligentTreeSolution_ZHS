@@ -92,12 +92,12 @@ class treeSolution:
         for index in range(needToPlay):
             self.mainWindow()
             toPlay = self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList')[index]
-            # self.classLearn(toPlay)
+            self.classLearn(toPlay)
             self.mainWindow()
             try:
                 toPlay = self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList')[index]
-                # self.faceToFaceClass(toPlay)
-                # self.mainWindow()
+                self.faceToFaceClass(toPlay)
+                self.mainWindow()
                 toPlay = self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList')[index]
                 if self.flag: self.quest.startAnswer(toPlay)
             except: pass

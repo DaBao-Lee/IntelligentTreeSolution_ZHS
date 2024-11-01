@@ -80,6 +80,8 @@ class treeSolution:
             try:
                 self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'item-left-course')))
             except:
+                self.driver.get("https://onlineweb.zhihuishu.com")
+                time.sleep(0.5)
                 self.driver.get("https://onlineweb.zhihuishu.com/onlinestuh5")
                 time.sleep(1)
 
@@ -91,31 +93,33 @@ class treeSolution:
             self.mainWindow()
             toPlay = self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList')[index]
             self.classLearn(toPlay)
+            print("-" * 64)
             self.mainWindow()
             try:
                 toPlay = self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList')[index]
                 self.faceToFaceClass(toPlay)
+                self.mainWindow()
                 toPlay = self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList')[index]
                 self.quest.startAnswer(toPlay)
+                print('-' * 64)
             except: pass
-
-        print("学习结束")
+        print("学习结束".center(60, '-'))
+        self.driver.quit()
 
     def classLearn(self, toPlay):
         
         className = toPlay.find_element(By.CLASS_NAME, 'courseName')
         try: toPlay.find_element(By.CLASS_NAME, 'right-item-course')
         except: 
-            print(f"{className.text} 该课程尚未开始 跳过")
+            print(f"【{className.text}】 该课程尚未开始 跳过")
         else:
-            print("开始学习课程:", className.text)
+            print(f"开始学习课程:, 【{className.text}】")
             className.click()
             self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'tabTitle')))
             time.sleep(1.5)
             toFinish = self.driver.find_elements(By.CLASS_NAME, 'time_ico_half')
             hasFinish = self.driver.find_elements(By.CLASS_NAME, 'time_icofinish')
-            if len(toFinish) == len(hasFinish): 
-                print("课程学习已完成")
+            if len(toFinish) == len(hasFinish): pass
             else:
                 uls = self.driver.find_elements(By.TAG_NAME, 'ul')
                 true_uls = [x for x in uls if x.get_attribute('class') == "list"]
@@ -164,7 +168,6 @@ class treeSolution:
         try: 
             face_classes = [x for x in self.driver.find_elements(By.CLASS_NAME, 'melightgreen_color') if x.text == "回放"]
             tmp_url = self.driver.current_url
-            print("-" * 64)
             for index in range(len(face_classes)):
                 if self.driver.current_url != tmp_url: 
                     self.driver.get(tmp_url)

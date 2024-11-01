@@ -20,7 +20,6 @@ class questMoudle:
         
     def startAnswer(self, toPlay):
         
-        print("答题模式".center(60, '-'))
         if self.driver.current_url != "https://onlineweb.zhihuishu.com/onlinestuh5":
             self.driver.get("https://onlineweb.zhihuishu.com/onlinestuh5")
         time.sleep(1.5)

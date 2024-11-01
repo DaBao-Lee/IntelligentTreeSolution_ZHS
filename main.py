@@ -28,7 +28,7 @@ class treeSolution:
         self.driver.set_window_size(1200, 800)
         self.driver.get('https://onlineweb.zhihuishu.com/onlinestuh5')
         self.net = orc.InferenceSession("data/best.onnx")
-        threading.Thread(target=self.errorCheck, daemon=True).start()
+        self.task = threading.Thread(target=self.errorCheck, daemon=True); self.task.start()
         self.wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="lUsername"]'))).send_keys(str(username))
         self.driver.find_element(By.XPATH, '//*[@id="lPassword"]').send_keys(str(mm))
         self.driver.find_element(By.XPATH, '//*[@id="f_sign_up"]/div[1]/span').click()
@@ -92,17 +92,18 @@ class treeSolution:
         for index in range(needToPlay):
             self.mainWindow()
             toPlay = self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList')[index]
-            self.classLearn(toPlay)
+            # self.classLearn(toPlay)
             self.mainWindow()
             try:
                 toPlay = self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList')[index]
-                self.faceToFaceClass(toPlay)
-                self.mainWindow()
+                # self.faceToFaceClass(toPlay)
+                # self.mainWindow()
                 toPlay = self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList')[index]
                 if self.flag: self.quest.startAnswer(toPlay)
             except: pass
         print("学习结束".center(60, '-'))
         self.driver.quit()
+        self.task.join()
 
     def classLearn(self, toPlay):
         

@@ -27,7 +27,7 @@ class questMoudle:
         courseName = className.text
         if os.path.exists(f"data/{courseName}.json"):
             self.js = json.load(open(f"data/{courseName}.json", encoding="utf-8"))
-            print(courseName + "题库已加载完成")
+            print("【3】题库已加载完成")
             toPlay.find_elements(By.CLASS_NAME, "course-menu-w")[1].click()
             time.sleep(2)
             self.driver.switch_to.window(self.driver.window_handles[-1])
@@ -36,7 +36,7 @@ class questMoudle:
             time.sleep(0.5)
             charpters = self.driver.find_elements(By.CLASS_NAME, 'examItemWrap')
             charpters = [x for x in charpters if x.find_element(By.CLASS_NAME, 'percentage_number').text in ["作业"]]
-            if len(charpters) == 0: print("所有单元测试均已完成".center(54, '-'))
+            if len(charpters) == 0: print("【4】所有单元测试均已完成")
             for index in range(len(charpters)): # ?
                 self.driver.switch_to.window(self.driver.window_handles[-1])
                 time.sleep(1)
@@ -87,7 +87,7 @@ class questMoudle:
                 time.sleep(0.5)
                 self.driver.close()
         else:
-            print("暂未有该门课程答案 停止作答.")
+            print("【3】暂未有该门课程答案 停止作答.")
 
     def similarityCalc(self, txt:any, dic:dict):
 

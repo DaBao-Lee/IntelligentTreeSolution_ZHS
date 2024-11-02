@@ -107,6 +107,7 @@ class treeSolution:
 
     def classLearn(self, toPlay):
         
+        print("-" * 60)
         className = toPlay.find_element(By.CLASS_NAME, 'courseName')
         try: toPlay.find_element(By.CLASS_NAME, 'right-item-course')
         except: 
@@ -158,7 +159,7 @@ class treeSolution:
                             print(f"\r{' '.join(per_class.text.split())}", end=" ")
                         print("完成")
                 time.sleep(0.5)
-            print("章节视频学习完成".center(56, '-'))
+            print("【1】章节视频学习完成")
 
     def faceToFaceClass(self, toPlay):
 
@@ -191,7 +192,7 @@ class treeSolution:
                             break
                     print("\r见面课进度已达80% 学习完成")
         except: print("暂无见面课可观看.")
-        print('见面课播放完毕'.center(57, '-'))
+        print('【2】见面课播放完毕')
         
     def speedChange(self, areaClick=False):
         try:

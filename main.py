@@ -32,7 +32,7 @@ class treeSolution:
         self.wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="lUsername"]'))).send_keys(str(username))
         self.driver.find_element(By.XPATH, '//*[@id="lPassword"]').send_keys(str(mm))
         self.driver.find_element(By.XPATH, '//*[@id="f_sign_up"]/div[1]/span').click()
-        time.sleep(0.8)
+        time.sleep(1.2)
         while self.passCaptia(): pass
         print(Fore.LIGHTYELLOW_EX + "登入成功".center(60, '-'))
         self.controlCenter()
@@ -119,7 +119,9 @@ class treeSolution:
             time.sleep(1.5)
             toFinish = self.driver.find_elements(By.CLASS_NAME, 'time_ico_half')
             hasFinish = self.driver.find_elements(By.CLASS_NAME, 'time_icofinish')
-            if len(toFinish) == len(hasFinish): pass
+            progressNum = self.driver.find_elements(By.CLASS_NAME, 'progress-num')
+            progressNum = [x for x in progressNum if int(x.text.strip("%")) > 82]
+            if len(toFinish) == len(hasFinish) or len(toFinish) == len(progressNum): pass
             else:
                 uls = self.driver.find_elements(By.TAG_NAME, 'ul')
                 true_uls = [x for x in uls if x.get_attribute('class') == "list"]
@@ -132,16 +134,15 @@ class treeSolution:
                             if int(per_class.find_element(By.CLASS_NAME, 'progress-num').text.strip("%")) >= 82:
                                 print("完成")
                                 continue
-                        except: pass
-                        try:
-                            per_class.find_element(By.CLASS_NAME, 'time_ico_half')
-                        except:
-                            print("完成")
-                            continue
-                        else: 
-                            if len(per_class.find_elements(By.CLASS_NAME, 'time_icofinish')) == 1:
+                        except: 
+                            try:
+                                per_class.find_element(By.CLASS_NAME, 'time_ico_half')
+                            except: 
                                 print("完成")
                                 continue
+                        if len(per_class.find_elements(By.CLASS_NAME, "time_icofinish")) == 1:
+                            print("完成")
+                            continue
                         time.sleep(0.5)
                         per_class.click()
                         time.sleep(1.5)
@@ -159,6 +160,7 @@ class treeSolution:
                             print(f"\r{' '.join(per_class.text.split())}", end=" ")
                         print("完成")
                 time.sleep(0.5)
+            print('-' * 60)
             print("【1】章节视频学习完成")
 
     def faceToFaceClass(self, toPlay):

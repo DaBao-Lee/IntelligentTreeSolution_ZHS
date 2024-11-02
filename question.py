@@ -79,6 +79,7 @@ class questMoudle:
                             args.append(self.similarityCalc(item, answers_dic))
                         for arg in args:
                             answers[arg].click()
+                            time.sleep(0.3)
                     self.driver.find_elements(By.CLASS_NAME, 'el-button--primary')[-1].click()
                     time.sleep(1)
                 self.driver.find_element(By.CLASS_NAME, 'btnStyleXSumit').click()

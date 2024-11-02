@@ -19,8 +19,15 @@ echo ***************************************************************************
 echo The pickles needed have already installed...
 echo Start run the script...
 echo ****************************************************************************
+cd ../ 
 
-python main.py  -y
+if exist vscode (
+	cd IntelligentTreeSolution_ZHS-main
+	python3.9 main.py  -y
+) else (
+	cd IntelligentTreeSolution_ZHS-main
+	python main.py  -y
+)
 
 pause
 exit

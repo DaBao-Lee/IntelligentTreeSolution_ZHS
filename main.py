@@ -15,8 +15,10 @@ class treeSolution:
     def __init__(self, username:str=None, mm:str=None, arg=None) -> None:
         
         options = wb.EdgeOptions()
-        if arg == "--headless": options.add_argument('--headless')
-        else: options.add_experimental_option('excludeSwitches', ['enable-logging'])
+        if arg == "--headless": 
+            options.add_argument('--headless')
+            options.add_argument('log-level=3')
+        else: options.add_experimental_option('excludeSwitches', ['enable-logging', 'enable-automation'])
         self.driver = wb.Edge(options=options)
         self.wait = WebDriverWait(self.driver, 5)
         self.action = ActionChains(self.driver)

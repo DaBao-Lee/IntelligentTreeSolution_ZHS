@@ -2,19 +2,22 @@ import numpy as np
 from fuzzywuzzy import fuzz
 from paddleocr import PaddleOCR
 import selenium.webdriver as wb
+from captcha import passCaptcha
 import os, time, cv2, json, logging, re
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
 from  selenium.webdriver.support import expected_conditions as EC
-
 logging.disable(logging.DEBUG | logging.WARNING)
 class questMoudle:
 
-    def __init__(self, driver: wb.Edge) -> None:
+    def __init__(self, driver: wb.Edge, wait, action) -> None:
         super().__init__()
 
         self.driver = driver
-        self.wait = WebDriverWait(self.driver, 10)
+        self.action = action
+        self.wait = wait
+        self.net = passCaptcha(self.driver, self.wait, self.action,
+                                easy_model="data/passEasy.onnx",
+                                complex_model="data/passComplex.pt")
         self.ocr = PaddleOCR(use_angle_cls=True, lang="ch", use_gpu=True)
         self.js = None
         
@@ -49,8 +52,10 @@ class questMoudle:
                 time.sleep(1.5)
                 self.driver.switch_to.window(self.driver.window_handles[-1])
                 time.sleep(1.5)
+                self.complexCaptchaCheck()
                 problems = self.driver.find_elements(By.CLASS_NAME, "subject_type_describe")
                 for index in range(len(problems)):
+                    self.complexCaptchaCheck()
                     img_btyes = problems[index].screenshot_as_png
                     img = cv2.imdecode(np.frombuffer(img_btyes, np.uint8), 1)
                     results = self.ocr.ocr(img)
@@ -99,3 +104,10 @@ class questMoudle:
         arg = np.array(scores).argmax()
 
         return arg
+    
+    def complexCaptchaCheck(self):
+
+        try:
+            while self.net.passComplexCaptcha():
+                pass 
+        except: pass

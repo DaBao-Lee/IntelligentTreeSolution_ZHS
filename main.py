@@ -18,12 +18,12 @@ class treeSolution:
         if arg == "--headless": options.add_argument('--headless')
         else: options.add_experimental_option('excludeSwitches', ['enable-logging'])
         self.driver = wb.Edge(options=options)
+        self.wait = WebDriverWait(self.driver, 5)
+        self.action = ActionChains(self.driver)
         try:
             self.flag = True 
-            self.quest = questMoudle(self.driver)
+            self.quest = questMoudle(self.driver, self.wait, self.action)
         except: self.flag = False 
-        self.action = ActionChains(self.driver)
-        self.wait = WebDriverWait(self.driver, 5)
         self.driver.set_window_size(1200, 800)
         self.driver.get('https://onlineweb.zhihuishu.com/onlinestuh5')
         self.net = passCaptcha(self.driver, self.wait, self.action,
@@ -54,7 +54,7 @@ class treeSolution:
 
     def controlCenter(self):
 
-        check = threading.Thread(target=self.complexCaptchaCheck, daemon=True); check.start()
+        # check = threading.Thread(target=self.complexCaptchaCheck, daemon=True); check.start()
         self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'item-left-course')))
         needToPlay = len(self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList'))
         for index in range(needToPlay):
@@ -85,6 +85,7 @@ class treeSolution:
             className.click()
             self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'tabTitle')))
             time.sleep(1.5)
+            self.complexCaptchaCheck()
             toFinish = self.driver.find_elements(By.CLASS_NAME, 'time_ico_half')
             hasFinish = self.driver.find_elements(By.CLASS_NAME, 'time_icofinish')
             progressNum = self.driver.find_elements(By.CLASS_NAME, 'progress-num')
@@ -111,11 +112,13 @@ class treeSolution:
                         if len(per_class.find_elements(By.CLASS_NAME, "time_icofinish")) == 1:
                             print("完成")
                             continue
+                        self.complexCaptchaCheck()
                         time.sleep(0.5)
                         per_class.click()
                         time.sleep(1.5)
                         self.speedChange()
                         while True:
+                            self.complexCaptchaCheck()
                             try:
                                 if len(per_class.find_elements(By.CLASS_NAME, 'time_icofinish')) == 1:
                                     break
@@ -178,10 +181,10 @@ class treeSolution:
 
     def complexCaptchaCheck(self):
 
-        while True:
-            try: self.net.passComplexCaptcha()
-            except: pass
-            time.sleep(0.5)
+        try:
+            while self.net.passComplexCaptcha():
+                pass 
+        except: pass
 
     def errorCheck(self):
 

@@ -27,7 +27,7 @@ if exist vscode (
 	python3.9 main.py  -y --headless
 ) else (
 	cd IntelligentTreeSolution_ZHS-main
-	python main.py  -y
+	python main.py  -y --headless
 )
 
 pause

@@ -78,8 +78,6 @@ class passCaptcha:
                 segmentPosiveimg.append({text: [color_dict[color], (x1, y1, x2, y2)]})
             else: segmentSideimg.append({text: [color_dict[color], (x1, y1, x2, y2)]})
 
-        print(segmentPosiveimg)
-        print(segmentSideimg)
         alpha = [x for x in description if x.isascii()]
         answer = None
         # 仅考虑朝向

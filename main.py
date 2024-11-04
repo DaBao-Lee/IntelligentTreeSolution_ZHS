@@ -54,21 +54,20 @@ class treeSolution:
 
     def controlCenter(self):
 
-        # check = threading.Thread(target=self.complexCaptchaCheck, daemon=True); check.start()
         self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'item-left-course')))
         needToPlay = len(self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList'))
         for index in range(needToPlay):
             self.mainWindow()
-            # toPlay = self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList')[index]
-            # self.classLearn(toPlay)
-            # self.mainWindow()
+            toPlay = self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList')[index]
+            self.classLearn(toPlay)
+            self.mainWindow()
             try:
-                # toPlay = self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList')[index]
-                # self.faceToFaceClass(toPlay)
-                # self.mainWindow()
+                toPlay = self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList')[index]
+                self.faceToFaceClass(toPlay)
+                self.mainWindow()
                 toPlay = self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList')[index]
                 if self.flag: self.quest.startAnswer(toPlay)
-            except Exception as e: print(e)
+            except: pass
         print("学习结束".center(60, '-'))
         self.driver.quit()
         sys.exit()

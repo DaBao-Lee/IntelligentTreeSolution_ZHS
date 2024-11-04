@@ -1,10 +1,10 @@
 import threading
 import os, time, sys
 from colorama import Fore
-from captcha import passCaptcha
 import selenium.webdriver as wb
 path = os.path.abspath("zhs.py")
 sys.path.append("\\".join(path.split("\\")[: -1]))
+from captcha import passCaptcha
 from question import questMoudle
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait

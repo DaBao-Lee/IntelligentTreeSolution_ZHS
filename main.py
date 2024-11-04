@@ -1,8 +1,7 @@
 import threading
-import numpy as np
+import os, time, sys
 from colorama import Fore
-import os, time, cv2, sys
-import onnxruntime as orc
+from captcha import passCaptcha
 import selenium.webdriver as wb
 path = os.path.abspath("zhs.py")
 sys.path.append("\\".join(path.split("\\")[: -1]))
@@ -10,7 +9,7 @@ from question import questMoudle
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.action_chains import ActionChains
-from  selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support import expected_conditions as EC
 
 class treeSolution:
     def __init__(self, username:str=None, mm:str=None, arg=None) -> None:
@@ -27,49 +26,17 @@ class treeSolution:
         self.wait = WebDriverWait(self.driver, 5)
         self.driver.set_window_size(1200, 800)
         self.driver.get('https://onlineweb.zhihuishu.com/onlinestuh5')
-        self.net = orc.InferenceSession("data/best.onnx")
-        self.task = threading.Thread(target=self.errorCheck, daemon=True); self.task.start()
+        self.net = passCaptcha(self.driver, self.wait, self.action,
+                                easy_model="data/passEasy.onnx",
+                                complex_model="data/passComplex.pt")
         self.wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="lUsername"]'))).send_keys(str(username))
         self.driver.find_element(By.XPATH, '//*[@id="lPassword"]').send_keys(str(mm))
         self.driver.find_element(By.XPATH, '//*[@id="f_sign_up"]/div[1]/span').click()
         time.sleep(1.2)
-        while self.passCaptia(): pass
+        while self.net.passEasyCaptcha(): pass
         print(Fore.LIGHTYELLOW_EX + "登入成功".center(60, '-'))
+        self.task = threading.Thread(target=self.errorCheck, daemon=True); self.task.start()
         self.controlCenter()
-
-    def passCaptia(self):
-
-        bytes = self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'yidun_bgimg'))).screenshot_as_png
-        img = cv2.imdecode(np.frombuffer(bytes, dtype=np.uint8), 1)
-        h, w = img.shape[:-1]
-        input_name = self.net.get_inputs()[0].name  
-        output_name = self.net.get_outputs()[0].name 
-        img_c = cv2.resize(img, (640, 640))
-        img_c = img_c.astype(np.float32) / 255
-        img_c = img_c.transpose([2, 0, 1])[None,]
-        result = self.net.run([output_name], {input_name: img_c})[0][0].transpose([1, 0])
-        boxes, conf = [], []
-        for layer in result:
-            score = layer[-1]
-            if score > 0.05:
-                x_c, y_c, w1, h1 = (layer[:-1] / 640) * np.array([w, h, w, h])
-                x = x_c - w1 // 2
-                y = y_c - h1 // 2
-                boxes.append((x, y, w1, h1))
-                conf.append(score)
-        index = cv2.dnn.NMSBoxes(boxes, conf, score_threshold=0.5, nms_threshold=0.4)
-        try:
-            index = index[0] if len(index) > 0 else 0
-            x, y, w, h = np.int_(boxes[index])
-        except: x = 10
-        e = self.driver.find_element(By.XPATH, '/html/body/div[33]/div[2]/div/div/div[2]/div/div[1]/div/div[1]/img[2]')
-        self.action.click_and_hold(e).perform()
-        self.action.move_by_offset(xoffset=x+8, yoffset=0).perform()
-        self.action.release().perform()
-        time.sleep(1)
-        if len(self.driver.find_elements(By.CLASS_NAME, 'yidun_modal__title')):
-            return True
-        else: return False
 
     def mainWindow(self):
 
@@ -87,6 +54,7 @@ class treeSolution:
 
     def controlCenter(self):
 
+        check = threading.Thread(target=self.complexCaptchaCheck, daemon=True); check.start()
         self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'item-left-course')))
         needToPlay = len(self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList'))
         for index in range(needToPlay):
@@ -208,6 +176,13 @@ class treeSolution:
                 self.driver.find_element(By.CLASS_NAME, 'videoArea').click()
         except: pass      
 
+    def complexCaptchaCheck(self):
+
+        while True:
+            try: self.net.passComplexCaptcha()
+            except: pass
+            time.sleep(0.5)
+
     def errorCheck(self):
 
         while True:
@@ -238,6 +213,7 @@ class treeSolution:
                     self.driver.switch_to.window(window)
                     self.driver.close()
                 self.driver.switch_to.window(self.driver.window_handles[-1])
+
             time.sleep(0.1)  
 
 def login():

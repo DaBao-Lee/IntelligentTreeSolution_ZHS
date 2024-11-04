@@ -4,6 +4,7 @@ color E
 echo ****************************************************************************
 echo Initializing...
 pip install onnxruntime onnx onnxslim opencv-python selenium paddlepaddle paddleocr fuzzywuzzy python-levenshtein -i https://pypi.tuna.tsinghua.edu.cn/simple -q
+pip install ultralytics ddddocr pillow -i https://pypi.tuna.tsinghua.edu.cn/simple -q
 
 cd data
 if exist answers.rar (

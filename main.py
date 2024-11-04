@@ -59,16 +59,16 @@ class treeSolution:
         needToPlay = len(self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList'))
         for index in range(needToPlay):
             self.mainWindow()
-            toPlay = self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList')[index]
-            self.classLearn(toPlay)
-            self.mainWindow()
+            # toPlay = self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList')[index]
+            # self.classLearn(toPlay)
+            # self.mainWindow()
             try:
-                toPlay = self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList')[index]
-                self.faceToFaceClass(toPlay)
-                self.mainWindow()
+                # toPlay = self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList')[index]
+                # self.faceToFaceClass(toPlay)
+                # self.mainWindow()
                 toPlay = self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList')[index]
                 if self.flag: self.quest.startAnswer(toPlay)
-            except: pass
+            except Exception as e: print(e)
         print("学习结束".center(60, '-'))
         self.driver.quit()
         sys.exit()
@@ -98,6 +98,7 @@ class treeSolution:
                     print('-' * 64)
                     classes = ul.find_elements(By.TAG_NAME, 'li')[: -1]
                     for per_class in classes:
+                        self.complexCaptchaCheck()
                         print(" ".join(per_class.text.split()), end=" ")
                         try:
                             if int(per_class.find_element(By.CLASS_NAME, 'progress-num').text.strip("%")) >= 82:
@@ -112,7 +113,6 @@ class treeSolution:
                         if len(per_class.find_elements(By.CLASS_NAME, "time_icofinish")) == 1:
                             print("完成")
                             continue
-                        self.complexCaptchaCheck()
                         time.sleep(0.5)
                         per_class.click()
                         time.sleep(1.5)

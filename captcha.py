@@ -2,6 +2,7 @@ import numpy as np
 from PIL import Image
 import cv2, time, ddddocr
 import onnxruntime as ort
+from ultralytics import YOLO
 import selenium.webdriver as wb
 from selenium.webdriver.common.by import By
 
@@ -50,8 +51,6 @@ class passCaptcha:
         else: return False
 
     def passComplexCaptcha(self) -> bool:
-
-        from ultralytics import YOLO
 
         self.driver.switch_to.window(self.driver.window_handles[-1])
         color_dict = {0: "蓝", 1: "灰", 2: "绿", 3: "红", 4: "黄"}

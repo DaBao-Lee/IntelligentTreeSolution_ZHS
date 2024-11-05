@@ -11,7 +11,7 @@ if exist answers.rar (
 	echo Initialization over...
 	del answers.rar
 ) else (
-	echo Initialization over...
+	echo Initialization over..
 )
 
 cd ../

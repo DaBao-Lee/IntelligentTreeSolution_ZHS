@@ -149,11 +149,12 @@ class treeSolution:
                     time.sleep(1.5)
                 face_classes = [x for x in self.driver.find_elements(By.CLASS_NAME, 'melightgreen_color') if x.text == "回放"]
                 face_classes[index].click()
-                time.sleep(1)
+                time.sleep(1.5)
                 self.driver.switch_to.window(self.driver.window_handles[-1])
-                if int(self.driver.find_element(By.CLASS_NAME, 'qiandao-num').text) >= 82: continue
                 video_list = self.wait.until(EC.presence_of_element_located((By.ID, 'videoList')))
                 videos = video_list.find_elements(By.CLASS_NAME, 'videomenu')
+                progress_temp = [video for video in videos if int(video.find_element(By.TAG_NAME, 'span').text.strip("%"))]
+                if len(progress_temp) == len(videos): continue
                 time.sleep(0.5)
                 for video in videos:
                     video.click()
@@ -165,7 +166,7 @@ class treeSolution:
                         if int(progress.strip("%")) > 82:
                             break
                     print("\r见面课进度已达80% 学习完成")
-        except: print("暂无见面课可观看.")
+        except Exception as e: print("暂无见面课可观看.", e)
         print('【2】见面课播放完毕')
         
     def speedChange(self, areaClick=False):

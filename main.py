@@ -160,11 +160,11 @@ class treeSolution:
                     self.speedChange(areaClick=True)
                     while True:
                         progress = video.find_element(By.TAG_NAME, 'span').text
-                        print(f"\r【2-1】见面课进度: {progress}", end=" ")
+                        print(f"\r【2】见面课进度: {progress}", end=" ")
                         if int(progress.strip("%")) > 82:
                             break
-                    print("\r【2-2】见面课进度已达80% 学习完成")
-        except Exception as e: print("【2】暂无见面课可观看.", e)
+                    print("\r【2】见面课进度已达80% 学习完成")
+        except: print("【2】暂无见面课可观看.")
         else: print('【2】见面课播放完毕')
         
     def speedChange(self, areaClick=False):

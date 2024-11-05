@@ -1,9 +1,11 @@
-import threading
-import os, time, sys
+import sys
+from os import path
+from time import sleep
 from colorama import Fore
+from threading import Thread
 import selenium.webdriver as wb
-path = os.path.abspath("zhs.py")
-sys.path.append("\\".join(path.split("\\")[: -1]))
+addition_path = path.abspath("zhs.py")
+sys.path.append("\\".join(addition_path.split("\\")[: -1]))
 from captcha import passCaptcha
 from question import questMoudle
 from selenium.webdriver.common.by import By
@@ -34,10 +36,10 @@ class treeSolution:
         self.wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="lUsername"]'))).send_keys(str(username))
         self.driver.find_element(By.XPATH, '//*[@id="lPassword"]').send_keys(str(mm))
         self.driver.find_element(By.XPATH, '//*[@id="f_sign_up"]/div[1]/span').click()
-        time.sleep(0.8)
+        sleep(0.8)
         while self.net.passEasyCaptcha(): pass
         print(Fore.LIGHTYELLOW_EX + "登入成功".center(60, '-'))
-        self.task = threading.Thread(target=self.errorCheck, daemon=True); self.task.start()
+        self.task = Thread(target=self.errorCheck, daemon=True); self.task.start()
         self.controlCenter()
 
     def mainWindow(self):
@@ -49,9 +51,9 @@ class treeSolution:
                 self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'item-left-course')))
             except:
                 self.driver.get("https://onlineweb.zhihuishu.com")
-                time.sleep(0.5)
+                sleep(0.5)
                 self.driver.get("https://onlineweb.zhihuishu.com/onlinestuh5")
-                time.sleep(0.8)
+                sleep(0.8)
 
     def controlCenter(self):
 
@@ -84,7 +86,7 @@ class treeSolution:
             print(f"开始学习课程: 【{className.text}】")
             className.click()
             self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'tabTitle')))
-            time.sleep(1.5)
+            sleep(1.5)
             self.complexCaptchaCheck()
             toFinish = self.driver.find_elements(By.CLASS_NAME, 'time_ico_half')
             hasFinish = self.driver.find_elements(By.CLASS_NAME, 'time_icofinish')
@@ -113,9 +115,9 @@ class treeSolution:
                         if len(per_class.find_elements(By.CLASS_NAME, "time_icofinish")) == 1:
                             print("完成")
                             continue
-                        time.sleep(0.5)
+                        sleep(0.5)
                         per_class.click()
-                        time.sleep(1.5)
+                        sleep(1.5)
                         self.speedChange()
                         while True:
                             self.complexCaptchaCheck()
@@ -130,14 +132,14 @@ class treeSolution:
                             except: pass
                             print(f"\r{' '.join(per_class.text.split())}", end=" ")
                         print("完成")
-                time.sleep(0.5)
+                sleep(0.5)
             print('-' * 60)
             print("【1】章节视频学习完成")
 
     def faceToFaceClass(self, toPlay):
 
         toPlay.find_elements(By.CLASS_NAME, "course-menu-w")[-1].click()
-        time.sleep(2)
+        sleep(2.5)
         self.driver.switch_to.window(self.driver.window_handles[-1])
         try: 
             face_classes = [x for x in self.driver.find_elements(By.CLASS_NAME, 'melightgreen_color') if x.text == "回放"]
@@ -145,10 +147,10 @@ class treeSolution:
             for index in range(len(face_classes)):
                 if self.driver.current_url != tmp_url: 
                     self.driver.get(tmp_url)
-                    time.sleep(1.5)
+                    sleep(1.5)
                 face_classes = [x for x in self.driver.find_elements(By.CLASS_NAME, 'melightgreen_color') if x.text == "回放"]
                 face_classes[index].click()
-                time.sleep(1.5)
+                sleep(1.5)
                 self.driver.switch_to.window(self.driver.window_handles[-1])
                 video_list = self.wait.until(EC.presence_of_element_located((By.ID, 'videoList')))
                 videos = video_list.find_elements(By.CLASS_NAME, 'videomenu')
@@ -156,7 +158,7 @@ class treeSolution:
                 if len(progress_temp) == len(videos): continue
                 for video in videos:
                     video.click()
-                    time.sleep(1)
+                    sleep(1)
                     self.speedChange(areaClick=True)
                     while True:
                         progress = video.find_element(By.TAG_NAME, 'span').text
@@ -170,12 +172,12 @@ class treeSolution:
     def speedChange(self, areaClick=False):
         try:
             self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'videoArea'))).click()
-            time.sleep(0.5)
+            sleep(0.5)
             self.driver.find_element(By.CLASS_NAME, 'speedBox').click()
             self.driver.find_element(By.CLASS_NAME, 'speedTab15').click()
             self.driver.find_element(By.CLASS_NAME, 'volumeIcon').click()
             if areaClick: 
-                time.sleep(0.5)
+                sleep(0.5)
                 self.driver.find_element(By.CLASS_NAME, 'videoArea').click()
         except: pass      
 
@@ -217,7 +219,7 @@ class treeSolution:
                     self.driver.close()
                 self.driver.switch_to.window(self.driver.window_handles[-1])
 
-            time.sleep(0.1)  
+            sleep(0.1)  
 
 def login():
     username = input("输入手机号:")
@@ -231,7 +233,7 @@ def login():
     treeSolution(username, mm)
 
 if __name__ == "__main__":
-    if os.path.exists('../user.txt'):
+    if path.exists('../user.txt'):
         if len(sys.argv) > 1:
             if sys.argv[1] == "-y": y_n = 'y'
         else: y_n = input("发现已有用户, 是否选择登入:[y/n]")

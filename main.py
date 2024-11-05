@@ -34,7 +34,7 @@ class treeSolution:
         self.wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="lUsername"]'))).send_keys(str(username))
         self.driver.find_element(By.XPATH, '//*[@id="lPassword"]').send_keys(str(mm))
         self.driver.find_element(By.XPATH, '//*[@id="f_sign_up"]/div[1]/span').click()
-        time.sleep(1.2)
+        time.sleep(0.8)
         while self.net.passEasyCaptcha(): pass
         print(Fore.LIGHTYELLOW_EX + "登入成功".center(60, '-'))
         self.task = threading.Thread(target=self.errorCheck, daemon=True); self.task.start()
@@ -43,7 +43,6 @@ class treeSolution:
     def mainWindow(self):
 
         self.driver.switch_to.window(self.driver.window_handles[-1])
-        time.sleep(0.5)
         if self.driver.current_url != "https://onlineweb.zhihuishu.com/onlinestuh5":
             self.driver.get("https://onlineweb.zhihuishu.com/onlinestuh5")
             try:
@@ -52,7 +51,7 @@ class treeSolution:
                 self.driver.get("https://onlineweb.zhihuishu.com")
                 time.sleep(0.5)
                 self.driver.get("https://onlineweb.zhihuishu.com/onlinestuh5")
-                time.sleep(1)
+                time.sleep(0.8)
 
     def controlCenter(self):
 
@@ -62,8 +61,8 @@ class treeSolution:
             self.mainWindow()
             toPlay = self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList')[index]
             self.classLearn(toPlay)
-            self.mainWindow()
             try:
+                self.mainWindow()
                 toPlay = self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList')[index]
                 self.faceToFaceClass(toPlay)
                 self.mainWindow()
@@ -153,21 +152,20 @@ class treeSolution:
                 self.driver.switch_to.window(self.driver.window_handles[-1])
                 video_list = self.wait.until(EC.presence_of_element_located((By.ID, 'videoList')))
                 videos = video_list.find_elements(By.CLASS_NAME, 'videomenu')
-                progress_temp = [video for video in videos if int(video.find_element(By.TAG_NAME, 'span').text.strip("%"))]
+                progress_temp = [video for video in videos if int(video.find_element(By.TAG_NAME, 'span').text.strip("%")) >= 82]
                 if len(progress_temp) == len(videos): continue
-                time.sleep(0.5)
                 for video in videos:
                     video.click()
                     time.sleep(1)
                     self.speedChange(areaClick=True)
                     while True:
                         progress = video.find_element(By.TAG_NAME, 'span').text
-                        print(f"\r见面课进度: {progress}", end=" ")
+                        print(f"\r【2-1】见面课进度: {progress}", end=" ")
                         if int(progress.strip("%")) > 82:
                             break
-                    print("\r见面课进度已达80% 学习完成")
-        except Exception as e: print("暂无见面课可观看.", e)
-        print('【2】见面课播放完毕')
+                    print("\r【2-2】见面课进度已达80% 学习完成")
+        except Exception as e: print("【2】暂无见面课可观看.", e)
+        else: print('【2】见面课播放完毕')
         
     def speedChange(self, areaClick=False):
         try:

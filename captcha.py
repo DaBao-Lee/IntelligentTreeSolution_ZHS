@@ -1,14 +1,8 @@
-import numpy as np
-from PIL import Image
-import cv2, time, ddddocr
-import onnxruntime as ort
-from ultralytics import YOLO
-import selenium.webdriver as wb
-from selenium.webdriver.common.by import By
+from __init__ import *
 
 class passCaptcha:
 
-    def __init__(self, driver: wb.Edge, wait, action, easy_model: str="", complex_model: str=""):
+    def __init__(self, driver, wait, action, easy_model: str="", complex_model: str=""):
 
         self.driver = driver
         self.wait = wait
@@ -45,7 +39,7 @@ class passCaptcha:
         self.action.click_and_hold(e).perform()
         self.action.move_by_offset(xoffset=x+8, yoffset=0).perform()
         self.action.release().perform()
-        time.sleep(1)
+        sleep(1)
         if len(self.driver.find_elements(By.CLASS_NAME, 'yidun_modal__title')):
             return True
         else: return False
@@ -176,7 +170,7 @@ class passCaptcha:
         img = self.driver.find_element(By.CLASS_NAME, 'yidun_bgimg')
         self.action.move_to_element_with_offset(img, xoffset=-160+(x1+x2)//2,
                                                     yoffset=-78+(y1+y2)//2).click().perform()
-        time.sleep(1.5)
+        sleep(1.5)
         if len(self.driver.find_elements(By.CLASS_NAME, 'yidun_bgimg')) != 0:
             return True
         else: return False

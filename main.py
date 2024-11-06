@@ -1,38 +1,27 @@
-import sys
-from os import path
-from time import sleep
-from colorama import Fore
-from threading import Thread
-import selenium.webdriver as wb
-addition_path = path.abspath("zhs.py")
-sys.path.append("\\".join(addition_path.split("\\")[: -1]))
+from __init__ import *
+
 from captcha import passCaptcha
 from question import questMoudle
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.support import expected_conditions as EC
 
 class treeSolution:
     def __init__(self, username:str=None, mm:str=None, arg=None) -> None:
         
         options = wb.EdgeOptions()
-        if arg == "--headless": 
-            options.add_argument('--headless')
-            options.add_argument('log-level=3')
+        if arg == "--headless": options.add_argument('--headless')
         else: options.add_experimental_option('excludeSwitches', ['enable-logging', 'enable-automation'])
+        options.add_argument('log-level=3')
         self.driver = wb.Edge(options=options)
-        self.wait = WebDriverWait(self.driver, 5)
+        self.wait = WebDriverWait(self.driver, 8)
         self.action = ActionChains(self.driver)
-        try:
-            self.flag = True 
-            self.quest = questMoudle(self.driver, self.wait, self.action)
-        except: self.flag = False 
         self.driver.set_window_size(1200, 800)
         self.driver.get('https://onlineweb.zhihuishu.com/onlinestuh5')
         self.net = passCaptcha(self.driver, self.wait, self.action,
                                 easy_model="data/passEasy.onnx",
                                 complex_model="data/passComplex.pt")
+        try:
+            self.flag = True 
+            self.quest = questMoudle(self.driver, self.wait, self.action, self.net)
+        except: self.flag = False 
         self.wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="lUsername"]'))).send_keys(str(username))
         self.driver.find_element(By.XPATH, '//*[@id="lPassword"]').send_keys(str(mm))
         self.driver.find_element(By.XPATH, '//*[@id="f_sign_up"]/div[1]/span').click()

@@ -1,23 +1,14 @@
-import numpy as np
-from fuzzywuzzy import fuzz
-from paddleocr import PaddleOCR
-import selenium.webdriver as wb
-from captcha import passCaptcha
-import os, time, cv2, json, logging, re
-from selenium.webdriver.common.by import By
-from  selenium.webdriver.support import expected_conditions as EC
-logging.disable(logging.DEBUG | logging.WARNING)
+from __init__ import *
+
 class questMoudle:
 
-    def __init__(self, driver: wb.Edge, wait, action) -> None:
+    def __init__(self, driver, wait, action, net) -> None:
         super().__init__()
 
         self.driver = driver
         self.action = action
         self.wait = wait
-        self.net = passCaptcha(self.driver, self.wait, self.action,
-                                easy_model="data/passEasy.onnx",
-                                complex_model="data/passComplex.pt")
+        self.net = net
         self.ocr = PaddleOCR(use_angle_cls=True, lang="ch", use_gpu=True)
         self.js = None
         
@@ -25,33 +16,33 @@ class questMoudle:
         
         if self.driver.current_url != "https://onlineweb.zhihuishu.com/onlinestuh5":
             self.driver.get("https://onlineweb.zhihuishu.com/onlinestuh5")
-        time.sleep(1.5)
+        sleep(1.5)
         className = toPlay.find_element(By.CLASS_NAME, 'courseName')
         courseName = className.text
-        if os.path.exists(f"data/{courseName}.json"):
+        if path.exists(f"data/{courseName}.json"):
             self.js = json.load(open(f"data/{courseName}.json", encoding="utf-8"))
             print("【3】题库已加载完成")
             toPlay.find_elements(By.CLASS_NAME, "course-menu-w")[1].click()
-            time.sleep(2)
+            sleep(2)
             self.driver.switch_to.window(self.driver.window_handles[-1])
             tmp_url = self.driver.current_url
             ok = self.wait.until(EC.presence_of_element_located((By.ID, 'examStateTabWsj')))
-            time.sleep(0.5)
+            sleep(0.5)
             charpters = self.driver.find_elements(By.CLASS_NAME, 'examItemWrap')
             charpters = [x for x in charpters if x.find_element(By.CLASS_NAME, 'percentage_number').text in ["作业"]]
             if len(charpters) == 0: print("【4】所有单元测试均已完成")
-            for index in range(len(charpters)): # ?
+            for index in range(len(charpters)):
                 self.driver.switch_to.window(self.driver.window_handles[-1])
-                time.sleep(1)
+                sleep(1)
                 if self.driver.current_url != tmp_url:
                     self.driver.get(tmp_url)
-                    time.sleep(3)
+                    sleep(3)
                 charpters = self.driver.find_elements(By.CLASS_NAME, 'examItemWrap')
                 charpters = [x for x in charpters if x.find_element(By.CLASS_NAME, 'percentage_number').text in ["作业"]]
                 charpters[0].find_element(By.CLASS_NAME, "themeBg").click()
-                time.sleep(1.5)
+                sleep(1.5)
                 self.driver.switch_to.window(self.driver.window_handles[-1])
-                time.sleep(1.5)
+                sleep(1.5)
                 self.complexCaptchaCheck()
                 problems = self.driver.find_elements(By.CLASS_NAME, "subject_type_describe")
                 for index in range(len(problems)):
@@ -84,13 +75,13 @@ class questMoudle:
                             args.append(self.similarityCalc(item, answers_dic))
                         for arg in args:
                             answers[arg].click()
-                            time.sleep(0.3)
+                            sleep(0.3)
                     self.driver.find_elements(By.CLASS_NAME, 'el-button--primary')[-1].click()
-                    time.sleep(1)
+                    sleep(1)
                 self.driver.find_element(By.CLASS_NAME, 'btnStyleXSumit').click()
-                time.sleep(1.5)
+                sleep(1.5)
                 self.driver.find_elements(By.CLASS_NAME, 'el-button--default')[-1].click()
-                time.sleep(0.5)
+                sleep(0.5)
                 self.driver.close()
         else:
             print("【3】暂未有该门课程答案 停止作答.")

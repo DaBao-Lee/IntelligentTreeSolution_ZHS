@@ -1,0 +1,12 @@
+onnxruntime
+onnx
+onnxslim
+opencv-python
+selenium
+paddlepaddle
+paddleocr
+fuzzywuzzy
+python-levenshtein
+ultralytics
+ddddocr
+pillow

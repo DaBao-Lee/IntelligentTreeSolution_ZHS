@@ -56,7 +56,12 @@ class treeSolution:
         for index in range(needToPlay):
             self.mainWindow()
             toPlay = self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList')[index]
-            self.classLearn(toPlay)
+            process = float(toPlay.find_element(By.CLASS_NAME, 'processNum').text.strip("%"))
+            print("-" * 60)
+            className = toPlay.find_element(By.CLASS_NAME, 'courseName')
+            print(f"开始学习课程: 【{className.text}】")
+            if process != 100.0: self.classLearn(toPlay)
+            else: print("【1】章节视频学习完成")
             try:
                 self.mainWindow()
                 toPlay = self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList')[index]
@@ -71,13 +76,11 @@ class treeSolution:
 
     def classLearn(self, toPlay):
         
-        print("-" * 60)
         className = toPlay.find_element(By.CLASS_NAME, 'courseName')
         try: toPlay.find_element(By.CLASS_NAME, 'right-item-course')
         except: 
             print(f"【{className.text}】 该课程尚未开始 跳过")
         else:
-            print(f"开始学习课程: 【{className.text}】")
             className.click()
             self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'tabTitle')))
             sleep(1.5)

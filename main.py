@@ -78,8 +78,7 @@ class treeSolution:
         
         className = toPlay.find_element(By.CLASS_NAME, 'courseName')
         try: toPlay.find_element(By.CLASS_NAME, 'right-item-course')
-        except: 
-            print(f"【{className.text}】 该课程尚未开始 跳过")
+        except: print(f"【0】 该课程尚未开始 跳过")
         else:
             className.click()
             self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'tabTitle')))

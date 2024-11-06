@@ -1,3 +1,8 @@
+import sys
+from os import path
+addition_path = path.abspath("zhs.py")
+sys.path.append("\\".join(addition_path.split("\\")[: -1]))
+
 from __init__ import *
 
 from captcha import passCaptcha

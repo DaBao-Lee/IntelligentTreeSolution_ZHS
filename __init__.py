@@ -17,6 +17,4 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support import expected_conditions as EC
 
-addition_path = path.abspath("zhs.py")
-sys.path.append("\\".join(addition_path.split("\\")[: -1]))
 logging.disable(logging.DEBUG | logging.WARNING)

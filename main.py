@@ -54,7 +54,8 @@ class treeSolution:
         for index in range(needToPlay):
             self.mainWindow()
             toPlay = self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList')[index]
-            process = float(toPlay.find_element(By.CLASS_NAME, 'processNum').text.strip("%"))
+            try: process = float(toPlay.find_element(By.CLASS_NAME, 'processNum').text.strip("%"))
+            except: process = 0 
             print("-" * 60)
             className = toPlay.find_element(By.CLASS_NAME, 'courseName')
             print(f"开始学习课程: 【{className.text}】")

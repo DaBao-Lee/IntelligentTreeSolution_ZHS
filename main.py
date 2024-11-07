@@ -1,7 +1,6 @@
 import sys
 from os import path
-addition_path = path.abspath("main.py")
-sys.path.append("\\".join(addition_path.split("\\")[: -1]))
+sys.path.append(path.abspath(""))
 
 from __init__ import *
 

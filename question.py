@@ -16,7 +16,7 @@ class questMoudle:
         
         if self.driver.current_url != "https://onlineweb.zhihuishu.com/onlinestuh5":
             self.driver.get("https://onlineweb.zhihuishu.com/onlinestuh5")
-        sleep(1.5)
+            sleep(1.5)
         className = toPlay.find_element(By.CLASS_NAME, 'courseName')
         courseName = className.text
         if path.exists(f"data/{courseName}.json"):

@@ -41,8 +41,7 @@ class treeSolution:
         self.driver.switch_to.window(self.driver.window_handles[-1])
         if self.driver.current_url != "https://onlineweb.zhihuishu.com/onlinestuh5":
             self.driver.get("https://onlineweb.zhihuishu.com/onlinestuh5")
-            try:
-                self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'item-left-course')))
+            try: self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'item-left-course')))
             except:
                 self.driver.get("https://onlineweb.zhihuishu.com")
                 sleep(0.5)
@@ -103,8 +102,7 @@ class treeSolution:
                                 print("完成")
                                 continue
                         except: 
-                            try:
-                                per_class.find_element(By.CLASS_NAME, 'time_ico_half')
+                            try: per_class.find_element(By.CLASS_NAME, 'time_ico_half')
                             except: 
                                 print("完成")
                                 continue

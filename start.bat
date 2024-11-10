@@ -33,10 +33,10 @@ if exist __pycache__ (
 	cd ../
 	if exist vscode (
 	cd IntelligentTreeSolution_ZHS-main
-	python3.9 main.py  -y --headless
+	python3.9 main.pyc  -y --headless
 ) else (
 	cd IntelligentTreeSolution_ZHS-main
-	python main.py  -y --headless
+	python main.pyc  -y --headless
 	)
 ) else (
 	cd ../

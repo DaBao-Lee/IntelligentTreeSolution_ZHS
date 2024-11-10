@@ -20,15 +20,33 @@ echo ***************************************************************************
 echo The pickles needed have already installed...
 echo Start run the script...
 echo ****************************************************************************
-cd ../ 
 
-if exist vscode (
+if exist __pycache__ (
+	cd __pycache__
+	move /y *.* ../
+	cd ../
+	if exist main.pyc (
+		del  /s /f main.c*
+	) else (
+		rename main.c* main.pyc
+	)
+	cd ../
+	if exist vscode (
 	cd IntelligentTreeSolution_ZHS-main
 	python3.9 main.py  -y --headless
 ) else (
 	cd IntelligentTreeSolution_ZHS-main
 	python main.py  -y --headless
+	)
+) else (
+	cd ../
+	if exist vscode (
+	cd IntelligentTreeSolution_ZHS-main
+	python3.9 main.py  -y --headless
+) else (
+	cd IntelligentTreeSolution_ZHS-main
+	python main.py  -y --headless
+	)
 )
-
 pause
 exit

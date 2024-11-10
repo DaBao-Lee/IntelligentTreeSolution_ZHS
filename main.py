@@ -70,6 +70,7 @@ class treeSolution:
                 if self.flag: self.quest.startAnswer(toPlay)
             except: pass
         print("学习结束".center(60, '-'))
+        compile_file("main.py", quiet=1)
         self.driver.quit()
         sys.exit()
 

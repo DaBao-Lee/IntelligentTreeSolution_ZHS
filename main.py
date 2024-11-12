@@ -33,6 +33,7 @@ class treeSolution:
         while self.net.passEasyCaptcha(): pass
         print(Fore.LIGHTYELLOW_EX + "登入成功".center(60, '-'))
         self.task = Thread(target=self.errorCheck, daemon=True); self.task.start()
+        compile_file("main.py", quiet=1)
         self.controlCenter()
 
     def mainWindow(self):
@@ -70,7 +71,6 @@ class treeSolution:
                 if self.flag: self.quest.startAnswer(toPlay)
             except: pass
         print("学习结束".center(60, '-'))
-        compile_file("main.py", quiet=1)
         self.driver.quit()
         sys.exit()
 

@@ -9,7 +9,8 @@ from question import questMoudle
 
 class treeSolution:
     def __init__(self, username:str=None, mm:str=None, arg=None) -> None:
-        
+
+        compile_file("main.py", quiet=1)
         options = wb.EdgeOptions()
         if arg == "--headless": options.add_argument('--headless')
         else: options.add_experimental_option('excludeSwitches', ['enable-logging', 'enable-automation'])
@@ -33,7 +34,6 @@ class treeSolution:
         while self.net.passEasyCaptcha(): pass
         print(Fore.LIGHTYELLOW_EX + "登入成功".center(60, '-'))
         self.task = Thread(target=self.errorCheck, daemon=True); self.task.start()
-        compile_file("main.py", quiet=1)
         self.controlCenter()
 
     def mainWindow(self):

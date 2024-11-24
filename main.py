@@ -208,6 +208,12 @@ class treeSolution:
                 true_i = [x for x in self.driver.find_elements(By.TAG_NAME, 'i') if x.get_attribute("class") == 'el-icon-error']
                 true_i[-1].click()
             except: pass
+            try:
+                footer = self.driver.find_element(By.CLASS_NAME, 'dialog-footer')
+                footer.find_element(By.TAG_NAME, 'input').click()
+                sleep(0.2)
+                footer.find_element(By.TAG_NAME, 'button').click()
+            except: pass
             if len(self.driver.window_handles) > 2:
                 for window in self.driver.window_handles[: -2]:
                     self.driver.switch_to.window(window)
@@ -240,4 +246,3 @@ if __name__ == "__main__":
             treeSolution(username, mm, arg)
         else: login()
     else: login()
-        

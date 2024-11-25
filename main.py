@@ -189,15 +189,12 @@ class treeSolution:
             try: self.driver.find_element(By.XPATH, '//*[@id="app"]/div/div[6]/div[2]/div[1]/i').click()
             except: pass
             try:
-                self.driver.find_elements(By.CLASS_NAME, 'item-topic')[0].click()
-                self.driver.find_element(By.CLASS_NAME, 'btn-content').click()
-            except: pass
-            try:
                 numbers = self.driver.find_element(By.CLASS_NAME, 'el-pager').find_elements(By.CLASS_NAME, "number")
                 for number in numbers:
                     number.click()
-                    self.driver.find_elements(By.CLASS_NAME, 'item-topic')[0].click()
-                self.driver.find_element(By.XPATH, '//*[@id="playTopic-dialog"]/div/div[3]/span/div').click()
+                    dig = [x for x in self.driver.find_elements(By.CLASS_NAME, 'el-dialog') if x.get_attribute('aria-label') == '弹题测验'][0]
+                    [x.click() for x in dig.find_elements(By.CLASS_NAME, 'item-topic')[: -1]]
+                    dig.find_element(By.CLASS_NAME, 'btn').click()
                 self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'videoArea'))).click()
             except: pass
             try: self.driver.find_element(By.CLASS_NAME, 'popbtn_yes').click()
@@ -209,9 +206,8 @@ class treeSolution:
                 true_i[-1].click()
             except: pass
             try:
-                footer = self.driver.find_element(By.CLASS_NAME, 'dialog-footer')
+                footer = [x for x in self.driver.find_element(By.CLASS_NAME, 'dialog-footer') if x.get_attribute('aria-label') == '在线学习诚信承诺书'][0]
                 footer.find_element(By.TAG_NAME, 'input').click()
-                sleep(0.2)
                 footer.find_element(By.TAG_NAME, 'button').click()
             except: pass
             if len(self.driver.window_handles) > 2:

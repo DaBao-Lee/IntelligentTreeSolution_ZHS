@@ -195,6 +195,8 @@ class treeSolution:
                     dig = [x for x in self.driver.find_elements(By.CLASS_NAME, 'el-dialog') if x.get_attribute('aria-label') == '弹题测验'][0]
                     [x.click() for x in dig.find_elements(By.CLASS_NAME, 'item-topic')[: -1]]
                     dig.find_element(By.CLASS_NAME, 'btn').click()
+                    try: self.driver.find_element(By.CLASS_NAME, 'el-message-box__wrapper').find_element(By.TAG_NAME, 'button').click()
+                    except: pass
                 self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'videoArea'))).click()
             except: pass
             try: self.driver.find_element(By.CLASS_NAME, 'popbtn_yes').click()

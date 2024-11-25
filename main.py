@@ -206,7 +206,7 @@ class treeSolution:
                 true_i[-1].click()
             except: pass
             try:
-                footer = [x for x in self.driver.find_element(By.CLASS_NAME, 'dialog-footer') if x.get_attribute('aria-label') == '在线学习诚信承诺书'][0]
+                footer = [x for x in self.driver.find_elements(By.CLASS_NAME, 'el-dialog') if x.get_attribute('aria-label') == '在线学习诚信承诺书'][0]
                 footer.find_element(By.TAG_NAME, 'input').click()
                 footer.find_element(By.TAG_NAME, 'button').click()
             except: pass

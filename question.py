@@ -101,4 +101,4 @@ class questMoudle:
         try:
             while self.net.passComplexCaptcha():
                 pass 
-        except Exception as e: print(e)
+        except : pass

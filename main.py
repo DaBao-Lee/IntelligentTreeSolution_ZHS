@@ -67,8 +67,12 @@ class treeSolution:
                 toPlay = self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList')[index]
                 self.faceToFaceClass(toPlay)
                 self.mainWindow()
-                toPlay = self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList')[index]
-                if self.flag: self.quest.startAnswer(toPlay)
+                if process != 100.0:
+                    toPlay = self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList')[index]
+                    if self.flag: self.quest.startAnswer(toPlay)
+                else: 
+                    print("【3】题库已加载完成")
+                    print("【4】所有单元测试均已完成")
             except: pass
         print("学习结束".center(60, '-'))
         self.driver.quit()

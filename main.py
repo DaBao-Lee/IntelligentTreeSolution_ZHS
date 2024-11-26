@@ -65,7 +65,7 @@ class treeSolution:
             try:
                 self.mainWindow()
                 toPlay = self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList')[index]
-                # self.faceToFaceClass(toPlay)
+                self.faceToFaceClass(toPlay)
                 self.mainWindow()
                 if process != 100.0:
                     toPlay = self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList')[index]

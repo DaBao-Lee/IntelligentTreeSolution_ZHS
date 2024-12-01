@@ -83,7 +83,7 @@ class questMoudle:
                 self.driver.find_elements(By.CLASS_NAME, 'el-button--default')[-1].click()
                 sleep(0.5)
                 self.driver.close()
-                print("【4】所有单元测试均已完成")
+            print("【4】所有单元测试均已完成")
         else:
             print("【3】暂未有该门课程答案 停止作答.")
 

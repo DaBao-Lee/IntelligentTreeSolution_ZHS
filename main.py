@@ -15,6 +15,7 @@ class treeSolution:
         if arg == "--headless": options.add_argument('--headless')
         else: options.add_experimental_option('excludeSwitches', ['enable-logging', 'enable-automation'])
         options.add_argument('log-level=3')
+        options.add_argument('--mute-audio')
         self.driver = wb.Edge(options=options)
         self.wait = WebDriverWait(self.driver, 8)
         self.action = ActionChains(self.driver)

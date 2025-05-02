@@ -51,6 +51,7 @@ class treeSolution:
 
     def controlCenter(self):
 
+        self.driver.get('https://onlineweb.zhihuishu.com/onlinestuh5')
         self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'item-left-course')))
         needToPlay = len(self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList'))
         for index in range(needToPlay):
@@ -174,6 +175,10 @@ class treeSolution:
             self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'videoArea'))).click()
             sleep(0.5)
             self.driver.find_element(By.CLASS_NAME, 'speedBox').click()
+            self.driver.execute_script("""
+                                       let sss = document.getElementsByClassName('speedTab15')[0];
+                                       sss.setAttribute('rate', '1.8');
+                                       """)
             self.driver.find_element(By.CLASS_NAME, 'speedTab15').click()
             self.driver.find_element(By.CLASS_NAME, 'volumeIcon').click()
             if areaClick: 
@@ -217,12 +222,17 @@ class treeSolution:
                 footer.find_element(By.TAG_NAME, 'input').click()
                 footer.find_element(By.TAG_NAME, 'button').click()
             except: pass
+            try: self.driver.find_element(By.XPATH, '/html/body/div[5]/div/div[3]/span/div[2]/button/span').click()
+            except: pass
+
+            try: self.driver.find_element(By.XPATH, '/html/body/div[1]/div/div[10]/div/div/div[2]/div[1]/img').click()
+            except: pass
             if len(self.driver.window_handles) > 2:
                 for window in self.driver.window_handles[: -2]:
                     self.driver.switch_to.window(window)
                     self.driver.close()
                 self.driver.switch_to.window(self.driver.window_handles[-1])
-
+            
             sleep(0.1)  
 
 def login():

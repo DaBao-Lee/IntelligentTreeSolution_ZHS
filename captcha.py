@@ -40,18 +40,24 @@ class passCaptcha:
         self.action.move_by_offset(xoffset=x+8, yoffset=0).perform()
         self.action.release().perform()
         sleep(1)
+        try:
+            while self.passComplexCaptcha(condition=('By.XPATH', '/html/body/div[34]/div[2]/div/div/div[2]/div/div[1]/div/div[1]')):
+                    pass
+        except: pass
         if len(self.driver.find_elements(By.CLASS_NAME, 'yidun_modal__title')):
             return True
-        else: return False
+        else: 
+            return False
 
-    def passComplexCaptcha(self) -> bool:
+    def passComplexCaptcha(self, condition: tuple=("By.CLASS_NAME", "yidun_bgimg")) -> bool:
 
         self.driver.switch_to.window(self.driver.window_handles[-1])
         color_dict = {0: "蓝", 1: "灰", 2: "绿", 3: "红", 4: "黄"}
-        bytes = self.driver.find_element(By.CLASS_NAME, 'yidun_bgimg').screenshot_as_png
+        bytes = self.driver.find_element(eval(condition[0]), condition[1]).screenshot_as_png
         img = cv2.imdecode(np.frombuffer(bytes, dtype=np.int8), 1)
-        description = self.driver.find_element(By.CLASS_NAME, 'yidun-fallback__tip').text
-
+        if condition[0] != "By.CLASS_NAME":
+            description = self.driver.find_elements(By.CLASS_NAME, 'yidun-fallback__tip')[-1].text
+        else: description = self.driver.find_element(By.CLASS_NAME, 'yidun-fallback__tip').text
         complexModel = YOLO(self.model_path, task="detect", verbose=False)
         colorModel = YOLO("data/colorDetect.pt", task="classify", verbose=False)
         orcModel = ddddocr.DdddOcr(show_ad=False, use_gpu=True)
@@ -165,13 +171,13 @@ class passCaptcha:
                         if key == target1:
                             answer = item
         if answer is None: 
-            answer = {"随心", ["彩", (0, 0, 0, 0)]}
+            answer = {"随心": ["彩", (0, 0, 0, 0)]}
         x1, y1, x2, y2 = np.intp(list(answer.values())[0][1])
-        img = self.driver.find_element(By.CLASS_NAME, 'yidun_bgimg')
+        img = self.driver.find_element(eval(condition[0]), condition[1])
         self.action.move_to_element_with_offset(img, xoffset=-160+(x1+x2)//2,
                                                     yoffset=-78+(y1+y2)//2).click().perform()
         sleep(1.5)
-        if len(self.driver.find_elements(By.CLASS_NAME, 'yidun_bgimg')) != 0:
+        if len(self.driver.find_elements(eval(condition[0]), condition[1])) != 0:
             return True
         else: return False
             

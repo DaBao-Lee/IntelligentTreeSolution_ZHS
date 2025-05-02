@@ -1,4 +1,4 @@
-onnxruntime
+onnxruntime-gpu
 onnx
 onnxslim
 opencv-python

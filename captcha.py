@@ -45,8 +45,10 @@ class passCaptcha:
                     pass
         except: pass
         if len(self.driver.find_elements(By.CLASS_NAME, 'yidun_modal__title')):
+            try:
                 result = self.passComplexCaptcha()
                 return result
+            except: return True
         else: 
             return False
 

@@ -30,7 +30,7 @@ class treeSolution:
         self.wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="lUsername"]'))).send_keys(str(username))
         self.driver.find_element(By.XPATH, '//*[@id="lPassword"]').send_keys(str(mm))
         self.driver.find_element(By.XPATH, '//*[@id="f_sign_up"]/div[1]/span').click()
-        sleep(0.8)
+        sleep(1)
         while self.net.passEasyCaptcha(): pass
         print(Fore.LIGHTYELLOW_EX + "登入成功".center(60, '-'))
         self.task = Thread(target=self.errorCheck, daemon=True); self.task.start()
@@ -51,7 +51,10 @@ class treeSolution:
     def controlCenter(self):
 
         self.driver.get('https://onlineweb.zhihuishu.com/onlinestuh5')
-        self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'item-left-course')))
+        try:
+            self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'item-left-course')))
+        except:
+            print("暂无课程需要学习！")
         needToPlay = len(self.driver.find_elements(By.CLASS_NAME, 'interestingHoverList'))
         for index in range(needToPlay):
             self.mainWindow()

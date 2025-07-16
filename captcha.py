@@ -45,7 +45,8 @@ class passCaptcha:
                     pass
         except: pass
         if len(self.driver.find_elements(By.CLASS_NAME, 'yidun_modal__title')):
-            return True
+                result = self.passComplexCaptcha()
+                return result
         else: 
             return False
 
@@ -53,14 +54,17 @@ class passCaptcha:
 
         self.driver.switch_to.window(self.driver.window_handles[-1])
         color_dict = {0: "蓝", 1: "灰", 2: "绿", 3: "红", 4: "黄"}
-        bytes = self.driver.find_element(eval(condition[0]), condition[1]).screenshot_as_png
+        try:
+            bytes = self.driver.find_element(eval(condition[0]), condition[1]).screenshot_as_png
+        except: 
+            bytes = self.driver.find_elements(eval(condition[0]), condition[1])[-1].screenshot_as_png
         img = cv2.imdecode(np.frombuffer(bytes, dtype=np.int8), 1)
         if condition[0] != "By.CLASS_NAME":
             description = self.driver.find_elements(By.CLASS_NAME, 'yidun-fallback__tip')[-1].text
         else: description = self.driver.find_element(By.CLASS_NAME, 'yidun-fallback__tip').text
         complexModel = YOLO(self.model_path, task="detect", verbose=False)
         colorModel = YOLO("data/colorDetect.pt", task="classify", verbose=False)
-        orcModel = ddddocr.DdddOcr(show_ad=False, use_gpu=True)
+        orcModel = ddddocr.DdddOcr(use_gpu=False)
         result = complexModel.predict(img)[0].boxes
         segmentPosiveimg, segmentSideimg = [], []
 
@@ -69,7 +73,10 @@ class passCaptcha:
             segmentImg = img[y1-5: y2+5, x1-5: x2+5]
             color = colorModel.predict(segmentImg, verbose=False)[0].probs.top1
             segmentImage = Image.fromarray(segmentImg)
-            text = orcModel.classification(segmentImage)
+            buffer = BytesIO()
+            segmentImage.save(buffer, format="PNG")
+            buffer.seek(0)
+            text = orcModel.classification(buffer.getvalue())
             if text == "0": text = "o"
             if text == '' and "体" not in description: text = 'i'
             if "0" in description: description = description.replace("0", "o")

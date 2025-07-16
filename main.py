@@ -10,7 +10,6 @@ from question import questMoudle
 class treeSolution:
     def __init__(self, username:str=None, mm:str=None, arg=None) -> None:
 
-        compile_file("main.py", quiet=1)
         options = wb.EdgeOptions()
         if arg == "--headless": options.add_argument('--headless')
         else: options.add_experimental_option('excludeSwitches', ['enable-logging', 'enable-automation'])

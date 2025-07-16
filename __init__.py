@@ -3,6 +3,7 @@
 import numpy as np
 from os import path
 from PIL import Image
+from io import BytesIO
 from time import sleep
 import onnxruntime as ort
 from colorama import Fore
@@ -11,7 +12,6 @@ from threading import Thread
 from ultralytics import YOLO
 from paddleocr import PaddleOCR
 import selenium.webdriver as wb
-from compileall import compile_file
 from selenium.webdriver.common.by import By
 import sys, cv2, ddddocr, json, logging, re
 from selenium.webdriver.support.ui import WebDriverWait
